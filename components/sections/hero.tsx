@@ -33,7 +33,7 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-gray-900 text-white"
+      className="relative min-h-screen flex items-center justify-center bg-[#ECEBE8] text-black"
     >
       <div className="container mx-auto px-4 text-center">
         <h1
@@ -44,12 +44,15 @@ export function Hero() {
         </h1>
         <p
           ref={subtitleRef}
-          className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto"
+          className="text-xl md:text-2xl text-black/70 max-w-2xl mx-auto"
         >
           Exclusive Club in Zurich
         </p>
       </div>
+      {/* Box nero per testare l'inversione del logo */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-black" />
     </section>
   )
 }
+
 

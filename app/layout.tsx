@@ -1,9 +1,15 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Instrument_Serif } from "next/font/google"
 import "./globals.css"
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider"
+import { VerticalLines } from "@/components/ui/vertical-lines"
+import { Header } from "@/components/ui/header"
 
-const inter = Inter({ subsets: ["latin"] })
+const instrumentSerif = Instrument_Serif({ 
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
+  weight: ["400"]
+})
 
 export const metadata: Metadata = {
   title: "Haute Club Zurich",
@@ -17,12 +23,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${instrumentSerif.variable} font-sans`}>
+        <VerticalLines />
         <SmoothScrollProvider>
+          <Header />
           {children}
         </SmoothScrollProvider>
       </body>
     </html>
   )
 }
+
 

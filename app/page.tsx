@@ -5,7 +5,7 @@ import { Contact } from "@/components/sections/contact"
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen pt-20">
       <Hero />
       <About />
       <Membership />
@@ -13,4 +13,5 @@ export default function Home() {
     </main>
   )
 }
+
 
