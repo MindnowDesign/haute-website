@@ -1,38 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Logo3D } from "./logo-3d"
 
 export function Header() {
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-
-      // Se si scrolla verso il basso e si è oltre una certa soglia, nascondi
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false)
-      } 
-      // Se si scrolla verso l'alto, mostra
-      else if (currentScrollY < lastScrollY) {
-        setIsVisible(true)
-      }
-
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [lastScrollY])
-
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 bg-[#ECEBE8] border-b border-black/10 transition-transform duration-300 ${
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-[#ECEBE8] border-b border-black/10 transition-transform duration-300 translate-y-0"
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
         {/* Left: Login */}
