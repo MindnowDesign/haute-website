@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { Instrument_Serif } from "next/font/google"
 import "./globals.css"
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider"
-import { VerticalLines } from "@/components/ui/vertical-lines"
 import { Header } from "@/components/ui/header"
 
 const instrumentSerif = Instrument_Serif({ 
@@ -24,7 +23,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${instrumentSerif.variable} font-sans`}>
-        <VerticalLines />
         <SmoothScrollProvider>
           <Header />
           {children}

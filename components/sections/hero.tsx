@@ -49,8 +49,6 @@ export function Hero() {
           Exclusive Club in Zurich
         </p>
       </div>
-      {/* Box nero per testare l'inversione del logo */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-black" />
     </section>
   )
 }
