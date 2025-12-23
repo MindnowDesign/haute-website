@@ -1,9 +1,7 @@
 import { Hero } from "@/components/sections/hero"
 import { Story } from "@/components/sections/story"
 import { Gallery } from "@/components/sections/gallery"
-import { About } from "@/components/sections/about"
-import { Membership } from "@/components/sections/membership"
-import { Contact } from "@/components/sections/contact"
+import { MembershipIntro } from "@/components/sections/membership-intro"
 
 export default function Home() {
   return (
@@ -11,9 +9,7 @@ export default function Home() {
       <Hero />
       <Story />
       <Gallery />
-      <About />
-      <Membership />
-      <Contact />
+      <MembershipIntro />
     </main>
   )
 }

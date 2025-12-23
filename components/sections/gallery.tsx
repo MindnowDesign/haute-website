@@ -19,8 +19,8 @@ export function Gallery() {
   // Generate 12 images with different heights and widths
   const images = Array.from({ length: 12 }, (_, i) => ({
     id: i + 1,
-    width: [401, 394, 262, 394, 401, 394, 262, 394, 401, 394, 262, 394][i],
-    height: [449, 256, 404, 321, 449, 256, 404, 321, 449, 256, 404, 321][i],
+    width: [562, 552, 367, 552, 562, 552, 367, 552, 562, 552, 367, 552][i],
+    height: [629, 358, 566, 449, 629, 358, 566, 449, 629, 358, 566, 449][i],
     text: `[ LOREM IPSUM ${i + 1} ]`,
   }))
 
@@ -179,7 +179,7 @@ export function Gallery() {
   }, [totalWidth])
 
   return (
-    <section className="relative py-24 bg-[#ECEBE8] overflow-hidden">
+    <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div 
         ref={containerRef}
         className="relative cursor-grab active:cursor-grabbing"

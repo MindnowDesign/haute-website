@@ -395,7 +395,7 @@ export function Story() {
   }
 
   return (
-    <section className="relative py-24 bg-[#ECEBE8] min-h-[400px]">
+    <section className="relative py-32 bg-[#ECEBE8] min-h-[400px]">
       <div className="container mx-auto px-4">
         <p className="text-[58px] leading-[1.4] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] indent-[3em]">
           {renderText()}

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { Logo3D } from "./logo-3d"
+import { CTAButton } from "./cta-button"
 
 export function Header() {
   return (
@@ -10,12 +11,7 @@ export function Header() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
         {/* Left: Login */}
-        <Link
-          href="/login"
-          className="text-black text-xl font-sans tracking-tight hover:opacity-70 transition-opacity"
-        >
-          [ LOGIN ]
-        </Link>
+        <CTAButton href="/login">LOGIN</CTAButton>
 
         {/* Center: Logo */}
         <Link href="/" className="absolute left-1/2 -translate-x-1/2">
