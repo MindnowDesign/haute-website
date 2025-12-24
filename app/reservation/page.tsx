@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
+import { GlideOverButton } from "@/components/ui/glide-over-button"
 
 export default function ReservationPage() {
   const [formData, setFormData] = useState({
@@ -128,28 +128,27 @@ export default function ReservationPage() {
     <main className="min-h-screen pt-20 bg-[#ECEBE8]">
       <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            {/* Header */}
-            <div className="mb-12">
-              <h1 className="text-4xl md:text-5xl font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6 text-black">
-                Online-Reservations
-              </h1>
-              <p className="text-lg text-black/70 leading-relaxed mb-4">
-                Dear Member,
+          {/* Header */}
+          <div className="mb-28">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-16 text-black">
+              Online-Reservations
+            </h1>
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 md:gap-20">
+              <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
+                Dear Member, We are always pleased to receive your requests online.
               </p>
-              <p className="text-lg text-black/70 leading-relaxed mb-4">
-                We are always pleased to receive your requests online.
-              </p>
-              <p className="text-lg text-black/70 leading-relaxed">
+              <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
                 Please note that we can only deal with requests at short notice (less than 24 hours in advance) by telephone. Please call{" "}
-                <a href="tel:+41433447272" className="underline hover:opacity-70 transition-opacity">
+                <a href="tel:+41433447272" className="underline hover:opacity-70 transition-opacity text-black/70">
                   +41 43 344 72 72
                 </a>
                 .
               </p>
             </div>
+          </div>
 
-            {/* Form */}
+          {/* Form */}
+          <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSubmit} className="space-y-10">
               {/* Member Number */}
               <div>
@@ -361,12 +360,12 @@ export default function ReservationPage() {
 
               {/* Submit Button */}
               <div className="pt-4">
-                <Button
+                <GlideOverButton
                   type="submit"
-                  className="w-full bg-black text-[#ECEBE8] hover:bg-black/90 rounded-none"
+                  className="w-full h-10 px-4 py-2 bg-black text-[#ECEBE8] rounded-none"
                 >
                   Submit Reservation
-                </Button>
+                </GlideOverButton>
               </div>
             </form>
           </div>

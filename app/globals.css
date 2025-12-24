@@ -54,4 +54,61 @@
   }
 }
 
+@layer components {
+  /* Glide-Over Button Animation */
+  .button-glide-over {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .button-glide-over__text-wrapper {
+    height: 1.5em;
+    line-height: 1.5em;
+  }
+
+  .button-glide-over__text {
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Testo iniziale (visibile) */
+  .button-glide-over__text--initial {
+    transform: translateY(0);
+  }
+
+  /* Testo hover (nascosto sopra) */
+  .button-glide-over__text--hover {
+    transform: translateY(-100%);
+  }
+
+  /* All'hover: il testo iniziale esce sotto */
+  .button-glide-over:hover .button-glide-over__text--initial,
+  .button-glide-over:focus-visible .button-glide-over__text--initial {
+    transform: translateY(100%);
+  }
+
+  /* All'hover: il testo hover entra da sopra */
+  .button-glide-over:hover .button-glide-over__text--hover,
+  .button-glide-over:focus-visible .button-glide-over__text--hover {
+    transform: translateY(0);
+  }
+
+  /* Smooth exit animation */
+  .button-glide-over:not(:hover):not(:focus-visible) .button-glide-over__text {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .button-glide-over__text {
+      transition: none !important;
+      transform: none !important;
+    }
+
+    .button-glide-over__text--hover {
+      display: none !important;
+    }
+  }
+}
+
 
