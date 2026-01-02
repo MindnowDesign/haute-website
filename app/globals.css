@@ -109,6 +109,56 @@
       display: none !important;
     }
   }
+
+  /* Partnerclubs grid hover effect */
+  .partnerclubs-grid:has(.grid__item-link:hover) .grid__item-link:not(:hover) {
+    opacity: 0.3;
+    transition: opacity 0.25s ease-out;
+  }
+
+  .partnerclubs-grid:has(.grid__item-link:hover) .grid__item:not(:has(.grid__item-link:hover)) .grid__item-caption {
+    opacity: 0.3;
+    transition: opacity 0.25s ease-out;
+  }
+
+  .partnerclubs-grid .grid__item-link {
+    transition: opacity 0.25s ease-out;
+  }
+
+  .partnerclubs-grid .grid__item-caption {
+    transition: opacity 0.25s ease-out;
+  }
+
+  /* Events images smooth animations */
+  .event-image {
+    will-change: transform, opacity;
+  }
+
+  .event-image-inner {
+    will-change: transform;
+    transform-origin: center center;
+  }
+
+  /* Smooth image transitions */
+  .event-image:hover .event-image-inner {
+    filter: brightness(1.05);
+  }
+
+  /* Event image container for smooth width transitions */
+  .event-image-container {
+    will-change: width, flex-basis;
+    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                flex-basis 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .event-image,
+    .event-image-inner,
+    .event-image-container {
+      will-change: auto;
+      transition: none !important;
+    }
+  }
 }
 
 

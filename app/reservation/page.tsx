@@ -126,16 +126,16 @@ export default function ReservationPage() {
 
   return (
     <main className="min-h-screen pt-20 bg-[#ECEBE8]">
-      <section className="py-24">
-        <div className="container mx-auto px-4">
+      <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
+        <div className="container mx-auto px-4 mb-32">
           {/* Header */}
-          <div className="mb-28">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-16 text-black">
+          <div className="max-w-6xl mx-auto text-center mb-32">
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-20 text-black">
               Online-Reservations
             </h1>
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-16 md:gap-20">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 text-left">
               <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
-                Dear Member, We are always pleased to receive your requests online.
+                Dear Member, We are always pleased to receive your requests online. Our team carefully reviews each reservation to ensure we can provide you with the exceptional experience you expect.
               </p>
               <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
                 Please note that we can only deal with requests at short notice (less than 24 hours in advance) by telephone. Please call{" "}

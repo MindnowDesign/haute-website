@@ -211,7 +211,13 @@ export function Partnerclubs() {
         const distanceFromCenter = Math.abs(columnIndex - centerColumn)
         
         // Lag: colonne centrali seguono subito, quelle esterne hanno più lag (ancora più accentuato)
-        const lagFactor = 0.05 + (distanceFromCenter * 0.1) // Da 0.05 a 0.45 (ancora più lag = effetto più visibile)
+        // Quando tornano a 0, usa un lag più smooth per transizione più fluida
+        const baseLagFactor = 0.05 + (distanceFromCenter * 0.1) // Da 0.05 a 0.45
+        const isReturningToZero = Math.abs(targetY) < 0.1 && Math.abs(currentY) > 0.1
+        // Quando tornano a 0, riduci il lag factor per movimento più smooth e lento
+        const lagFactor = isReturningToZero 
+          ? baseLagFactor * 0.5 // Lag più smooth quando tornano a 0 (50% del normale = più lento e fluido)
+          : baseLagFactor
         
         // Interpola con lag
         const newY = lerp(currentY, targetY, lagFactor)
@@ -249,7 +255,7 @@ export function Partnerclubs() {
           items.forEach(item => {
             targetPositions.set(item, 0)
           })
-        }, 150) // 150ms dopo l'ultimo scroll (più smooth)
+        }, 250) // 250ms dopo l'ultimo scroll (più tempo per transizione smooth)
       } else if (!isScrolling) {
         // Se non stiamo scrollando, torna a 0
         items.forEach(item => {
@@ -304,7 +310,7 @@ export function Partnerclubs() {
       <div className="container mx-auto px-4">
         <div 
           ref={gridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-16 gap-y-20"
+          className="partnerclubs-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-16 gap-y-20"
           style={{
             '--column-count': '5',
             '--column-size': 'minmax(0, 1fr)',
