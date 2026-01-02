@@ -180,6 +180,19 @@ export function Gallery() {
 
   return (
     <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
+      <div className="container mx-auto px-4 mb-32 text-center">
+        <h2 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-12 text-black">
+          The <span className="italic">location</span> gallery
+        </h2>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 text-left">
+          <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+          </p>
+          <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+          </p>
+        </div>
+      </div>
       <div 
         ref={containerRef}
         className="relative cursor-grab active:cursor-grabbing"
@@ -187,7 +200,7 @@ export function Gallery() {
       >
         <div
           ref={carouselRef}
-          className="flex gap-[35px] items-end"
+          className="flex gap-[35px] items-start"
           style={{ willChange: "transform" }}
         >
           {duplicatedImages.map((image, index) => (
