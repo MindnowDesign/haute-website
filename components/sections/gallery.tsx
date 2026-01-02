@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { gsap } from "@/lib/gsap"
 
 export function Gallery() {
   const carouselRef = useRef<HTMLDivElement>(null)
@@ -15,6 +16,8 @@ export function Gallery() {
   const imageInnerRefs = useRef<(HTMLDivElement | null)[]>([])
   const scrollVelocityRef = useRef(0)
   const lastPositionRef = useRef(0)
+  const momentumRef = useRef(0)
+  const lastTimeRef = useRef(0)
 
   // Generate 12 images with different heights and widths
   const images = Array.from({ length: 12 }, (_, i) => ({
@@ -30,7 +33,7 @@ export function Gallery() {
   // Calculate total width of one set
   const totalWidth = images.reduce((sum, img) => sum + img.width + 35, 0)
 
-  // Smooth interpolation (lerp)
+  // Smooth interpolation (lerp) with GSAP-style easing
   const lerp = (start: number, end: number, factor: number) => {
     return start + (end - start) * factor
   }
@@ -40,30 +43,48 @@ export function Gallery() {
 
     const carousel = carouselRef.current
     const container = containerRef.current
+    let momentumTween: gsap.core.Tween | null = null
 
-    // Update carousel position with smooth interpolation
+    // Update carousel position with smooth interpolation and elastic bounds
     const updatePosition = () => {
       if (!carousel) return
       
-      // Calculate scroll velocity
+      const now = performance.now()
+      lastTimeRef.current = now
+      
+      // Calculate scroll velocity for momentum
       const currentPosition = positionRef.current
       const velocity = currentPosition - lastPositionRef.current
       scrollVelocityRef.current = lerp(scrollVelocityRef.current, velocity, 0.3)
       lastPositionRef.current = currentPosition
       
-      // Smooth interpolation to target position
-      positionRef.current = lerp(positionRef.current, targetPositionRef.current, 0.1)
+      // Apply momentum when not dragging
+      if (!isDraggingRef.current && Math.abs(momentumRef.current) > 0.1) {
+        targetPositionRef.current += momentumRef.current
+        momentumRef.current *= 0.92 // Friction
+      } else if (!isDraggingRef.current && Math.abs(momentumRef.current) <= 0.1) {
+        momentumRef.current = 0
+      }
       
-      // Handle infinite scroll reset
-      if (Math.abs(targetPositionRef.current) >= totalWidth) {
-        targetPositionRef.current = 0
-        positionRef.current = 0
-      } else if (targetPositionRef.current > 0) {
-        targetPositionRef.current = -totalWidth
-        positionRef.current = -totalWidth
+      // Smooth interpolation to target position (no bounds - infinite scroll)
+      positionRef.current = lerp(positionRef.current, targetPositionRef.current, 0.15)
+      
+      // Handle infinite scroll reset (seamless loop)
+      if (!isDraggingRef.current) {
+        // Reset when scrolling too far left (negative values)
+        if (targetPositionRef.current <= -totalWidth) {
+          targetPositionRef.current += totalWidth
+          positionRef.current += totalWidth
+        }
+        // Reset when scrolling too far right (positive values)
+        if (targetPositionRef.current > 0) {
+          targetPositionRef.current -= totalWidth
+          positionRef.current -= totalWidth
+        }
       }
 
-      carousel.style.transform = `translateX(${positionRef.current}px)`
+      // Apply transform directly for performance
+      gsap.set(carousel, { x: positionRef.current })
 
       // Apply horizontal distortion only when scrolling/dragging (like shader distortion)
       const velocityMagnitude = Math.abs(scrollVelocityRef.current)
@@ -109,9 +130,9 @@ export function Gallery() {
           imageEl.style.clipPath = `polygon(${points.join(', ')})`
           imageEl.style.transition = "none"
         } else {
-          // Reset when not scrolling with smooth easing
+          // Reset immediately when not scrolling (no animation)
           imageEl.style.clipPath = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-          imageEl.style.transition = "clip-path 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)"
+          imageEl.style.transition = "none"
         }
       })
     }
@@ -128,6 +149,7 @@ export function Gallery() {
       isDraggingRef.current = true
       startXRef.current = e.pageX - container.offsetLeft
       scrollLeftRef.current = targetPositionRef.current
+      momentumRef.current = 0 // Reset momentum on drag start
       container.style.cursor = "grabbing"
       e.preventDefault()
     }
@@ -137,17 +159,55 @@ export function Gallery() {
       e.preventDefault()
       const x = e.pageX - container.offsetLeft
       const walk = (x - startXRef.current) * 1.5 // Scroll speed multiplier
-      targetPositionRef.current = scrollLeftRef.current + walk // Inverted for mouse drag
+      const newTarget = scrollLeftRef.current + walk
+      
+      // Calculate momentum based on movement
+      const prevTarget = targetPositionRef.current
+      targetPositionRef.current = newTarget
+      momentumRef.current = (newTarget - prevTarget) * 0.5
     }
 
     const handleMouseUp = () => {
       isDraggingRef.current = false
       container.style.cursor = "grab"
+      
+      // Apply smooth easing to momentum when releasing drag
+      if (Math.abs(momentumRef.current) > 0.1) {
+        // Kill any existing momentum tween
+        if (momentumTween) {
+          momentumTween.kill()
+        }
+        
+        // Animate momentum to 0 with smooth easing
+        const startMomentum = momentumRef.current
+        momentumTween = gsap.to(momentumRef, {
+          current: 0,
+          duration: 1.2,
+          ease: "power2.out",
+          overwrite: true,
+        })
+      }
     }
 
     const handleMouseLeave = () => {
       isDraggingRef.current = false
       container.style.cursor = "grab"
+      
+      // Apply smooth easing to momentum when leaving drag area
+      if (Math.abs(momentumRef.current) > 0.1) {
+        // Kill any existing momentum tween
+        if (momentumTween) {
+          momentumTween.kill()
+        }
+        
+        // Animate momentum to 0 with smooth easing
+        momentumTween = gsap.to(momentumRef, {
+          current: 0,
+          duration: 1.2,
+          ease: "power2.out",
+          overwrite: true,
+        })
+      }
     }
 
     // Horizontal scroll with trackpad/wheel (only horizontal, not vertical)
@@ -155,7 +215,11 @@ export function Gallery() {
       // Only handle horizontal scroll (deltaX), ignore vertical scroll (deltaY)
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault()
-        targetPositionRef.current -= e.deltaX * 0.5 // Correct direction
+        const delta = e.deltaX * 0.5
+        targetPositionRef.current -= delta
+        
+        // Update momentum for smooth scrolling
+        momentumRef.current = -delta * 0.3
       }
       // If it's vertical scroll, don't prevent default and don't move carousel
     }
@@ -170,6 +234,13 @@ export function Gallery() {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
+      // Kill any running GSAP animations
+      if (momentumTween) {
+        momentumTween.kill()
+      }
+      gsap.killTweensOf(momentumRef)
+      gsap.killTweensOf(carousel)
+      
       container.removeEventListener("mousedown", handleMouseDown)
       container.removeEventListener("mousemove", handleMouseMove)
       container.removeEventListener("mouseup", handleMouseUp)
