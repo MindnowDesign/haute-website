@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
 
 // Partner clubs data from haute.ch
 const partnerClubs = [
@@ -26,9 +27,80 @@ const partnerClubs = [
 
 export function Partnerclubs() {
   const gridRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (!gridRef.current || !sectionRef.current || typeof window === 'undefined') return
+
+    const grid = gridRef.current
+    const section = sectionRef.current
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('.grid__item'))
+
+    if (items.length === 0) return
+
+    // Numero di colonne (5 su desktop)
+    const columnCount = 5
+
+    // Raggruppa gli item in colonne
+    const columns: HTMLElement[][] = Array.from({ length: columnCount }, () => [])
+
+    items.forEach((item, index) => {
+      const columnIndex = index % columnCount
+      columns[columnIndex].push(item)
+    })
+
+    // Crea le animazioni per ogni colonna con lag differenziato
+    const scrollTriggers: ScrollTrigger[] = []
+
+    columns.forEach((column, columnIndex) => {
+      const centerColumn = (columnCount - 1) / 2
+      const distanceFromCenter = Math.abs(columnIndex - centerColumn)
+      
+      // Calcola l'ammontare di movimento (colonne esterne si muovono di più)
+      const movementAmount = distanceFromCenter * 40 // Da 0 a 80px
+      
+      // Calcola il lag (colonne esterne hanno più lag = scrub più alto)
+      const lagAmount = 0.5 + (distanceFromCenter * 0.4) // Da 0.5 a 1.3
+
+      column.forEach((item) => {
+        // Crea un'animazione che muove l'elemento su e giù durante lo scroll
+        // Quando la sezione entra nella viewport, l'elemento si sposta
+        // Quando esce, torna alla posizione originale (y: 0)
+        const st = ScrollTrigger.create({
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: lagAmount, // Valore più alto = più lag
+          onUpdate: (self) => {
+            // Calcola lo spostamento basato sul progresso
+            // Progress va da 0 (inizio) a 1 (fine)
+            // Vogliamo che sia 0 quando la sezione è fuori dalla viewport
+            const progress = self.progress
+            // Usa una curva per un movimento più naturale
+            const easedProgress = progress * (2 - progress) // Ease out
+            const y = (easedProgress - 0.5) * movementAmount * 2
+            
+            gsap.set(item, { y: y })
+          },
+        })
+
+        scrollTriggers.push(st)
+      })
+    })
+
+    return () => {
+      // Cleanup: rimuovi tutti gli ScrollTriggers
+      scrollTriggers.forEach(st => st.kill())
+      
+      // Reset trasformazioni
+      items.forEach(item => {
+        gsap.set(item, { y: 0 })
+      })
+    }
+  }, [])
 
   return (
-    <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div className="container mx-auto px-4 mb-32">
         <div className="max-w-6xl mx-auto text-center mb-24">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-12 text-black">
@@ -45,12 +117,7 @@ export function Partnerclubs() {
         </div>
       </div>
 
-      {/* Grid Container - Ready for Elastic Grid Scroll Effect */}
-      {/* 
-        TODO: Add Elastic Grid Scroll effect using GSAP ScrollSmoother
-        The structure is prepared with grid__item classes for easy JavaScript manipulation.
-        Columns will be created dynamically by grouping items.
-      */}
+      {/* Grid Container with Elastic Grid Scroll Effect */}
       <div className="container mx-auto px-4">
         <div 
           ref={gridRef}
