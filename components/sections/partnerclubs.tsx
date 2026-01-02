@@ -162,18 +162,18 @@ export function Partnerclubs() {
     const updateTargetPositions = (velocity: number) => {
       const scrollDirection = velocity > 0 ? 1 : -1
       const velocityMagnitude = Math.abs(velocity)
-      const maxVelocity = 15 // Velocità massima considerata (aumentata per movimento più smooth)
+      const maxVelocity = 15
       const normalizedVelocity = Math.min(velocityMagnitude / maxVelocity, 1)
-      // Applica un easing per movimento più naturale
-      const easedVelocity = normalizedVelocity * normalizedVelocity // Ease out
+      // Easing per movimento più naturale
+      const easedVelocity = normalizedVelocity * normalizedVelocity
 
       columns.forEach((column, columnIndex) => {
         const centerColumn = (columnCount - 1) / 2
         const distanceFromCenter = Math.abs(columnIndex - centerColumn)
         
-        // Le colonne centrali non si muovono, quelle esterne si muovono di più (ancora più accentuato)
-        const movementAmount = distanceFromCenter * 55 * easedVelocity // Da 0 a ~110px (ancora più accentuato)
-        const targetY = -scrollDirection * movementAmount // Invertito: scroll verso il basso = movimento verso l'alto
+        // Movimento subtle: 35px come via di mezzo
+        const movementAmount = distanceFromCenter * 35 * easedVelocity
+        const targetY = -scrollDirection * movementAmount
 
         column.forEach((item) => {
           targetPositions.set(item, targetY)
@@ -210,13 +210,11 @@ export function Partnerclubs() {
         const centerColumn = (columnCount - 1) / 2
         const distanceFromCenter = Math.abs(columnIndex - centerColumn)
         
-        // Lag: colonne centrali seguono subito, quelle esterne hanno più lag (ancora più accentuato)
-        // Quando tornano a 0, usa un lag più smooth per transizione più fluida
-        const baseLagFactor = 0.05 + (distanceFromCenter * 0.1) // Da 0.05 a 0.45
+        // Lag più smooth e subtle
+        const baseLagFactor = 0.08 + (distanceFromCenter * 0.05)
         const isReturningToZero = Math.abs(targetY) < 0.1 && Math.abs(currentY) > 0.1
-        // Quando tornano a 0, riduci il lag factor per movimento più smooth e lento
         const lagFactor = isReturningToZero 
-          ? baseLagFactor * 0.5 // Lag più smooth quando tornano a 0 (50% del normale = più lento e fluido)
+          ? baseLagFactor * 0.6
           : baseLagFactor
         
         // Interpola con lag
@@ -351,7 +349,7 @@ export function Partnerclubs() {
               />
             </a>
             <figcaption className="grid__item-caption text-[16px] leading-[1.2] text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-              <div className="font-medium">{club.name}</div>
+              <div className="font-normal">{club.name}</div>
               <div className="text-[#8b8b8b] text-sm mt-1">{club.location}</div>
             </figcaption>
           </figure>

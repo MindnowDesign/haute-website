@@ -1,5 +1,8 @@
 "use client"
 
+import { useEffect, useRef } from "react"
+import { gsap } from "@/lib/gsap"
+
 interface TeamMember {
   name: string
   roles: string[]
@@ -130,8 +133,159 @@ const teamMembers: TeamMember[] = [
 ]
 
 export function Team() {
+  const gridRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (!gridRef.current || !sectionRef.current || typeof window === 'undefined') return
+
+    const grid = gridRef.current
+    const section = sectionRef.current
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('.team-member-item'))
+
+    if (items.length === 0) return
+
+    // Numero di colonne (3 su desktop)
+    const columnCount = 3
+
+    // Raggruppa gli item in colonne
+    const columns: HTMLElement[][] = Array.from({ length: columnCount }, () => [])
+
+    items.forEach((item, index) => {
+      const columnIndex = index % columnCount
+      columns[columnIndex].push(item)
+    })
+
+    // Stato per tracciare lo scroll
+    let lastScrollY = window.scrollY
+    let scrollVelocity = 0
+    let isScrolling = false
+    let scrollTimeout: NodeJS.Timeout | null = null
+    const currentPositions = new Map<HTMLElement, number>()
+    const targetPositions = new Map<HTMLElement, number>()
+
+    // Inizializza le posizioni
+    items.forEach(item => {
+      currentPositions.set(item, 0)
+      targetPositions.set(item, 0)
+    })
+
+    // Funzione di lerp (interpolazione)
+    const lerp = (start: number, end: number, factor: number) => {
+      return start + (end - start) * factor
+    }
+
+    // Funzione per aggiornare le posizioni target basate sulla velocità dello scroll
+    const updateTargetPositions = (velocity: number) => {
+      const scrollDirection = velocity > 0 ? 1 : -1
+      const velocityMagnitude = Math.abs(velocity)
+      const maxVelocity = 15
+      const normalizedVelocity = Math.min(velocityMagnitude / maxVelocity, 1)
+      // Easing per movimento più naturale
+      const easedVelocity = normalizedVelocity * normalizedVelocity
+
+      columns.forEach((column, columnIndex) => {
+        const centerColumn = (columnCount - 1) / 2
+        const distanceFromCenter = Math.abs(columnIndex - centerColumn)
+        
+        // Movimento subtle: 35px come via di mezzo
+        const movementAmount = distanceFromCenter * 35 * easedVelocity
+        const targetY = -scrollDirection * movementAmount
+
+        column.forEach((item) => {
+          targetPositions.set(item, targetY)
+        })
+      })
+    }
+
+    // Funzione di animazione con lag differenziato
+    const animate = () => {
+      items.forEach((item) => {
+        const currentY = currentPositions.get(item) || 0
+        const targetY = targetPositions.get(item) || 0
+        
+        const columnIndex = items.indexOf(item) % columnCount
+        const centerColumn = (columnCount - 1) / 2
+        const distanceFromCenter = Math.abs(columnIndex - centerColumn)
+        
+        // Lag più smooth e subtle
+        const baseLagFactor = 0.08 + (distanceFromCenter * 0.05)
+        const isReturningToZero = Math.abs(targetY) < 0.1 && Math.abs(currentY) > 0.1
+        const lagFactor = isReturningToZero 
+          ? baseLagFactor * 0.6
+          : baseLagFactor
+        
+        // Interpola con lag
+        const newY = lerp(currentY, targetY, lagFactor)
+        currentPositions.set(item, newY)
+        
+        // Applica la trasformazione
+        gsap.set(item, { y: newY })
+      })
+
+      requestAnimationFrame(animate)
+    }
+
+    // Gestore scroll
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      scrollVelocity = currentScrollY - lastScrollY
+      lastScrollY = currentScrollY
+
+      // Controlla se siamo nella sezione
+      const rect = section.getBoundingClientRect()
+      const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+
+      if (isInViewport && Math.abs(scrollVelocity) > 0.3) {
+        isScrolling = true
+        updateTargetPositions(scrollVelocity)
+
+        // Reset il timeout
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout)
+        }
+
+        // Quando lo scroll si ferma, torna alla posizione originale
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false
+          items.forEach(item => {
+            targetPositions.set(item, 0)
+          })
+        }, 250)
+      } else if (!isScrolling) {
+        // Se non stiamo scrollando, torna a 0
+        items.forEach(item => {
+          targetPositions.set(item, 0)
+        })
+      }
+    }
+
+    // Inizia l'animazione
+    animate()
+
+    // Aggiungi listener
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      // Cleanup
+      window.removeEventListener('scroll', handleScroll)
+      
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
+      
+      // Reset trasformazioni
+      items.forEach(item => {
+        gsap.set(item, { y: 0 })
+      })
+      
+      currentPositions.clear()
+      targetPositions.clear()
+    }
+  }, [])
+
   return (
-    <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div className="container mx-auto px-4 mb-32">
         {/* Header Section */}
         <div className="max-w-6xl mx-auto text-center mb-40">
@@ -157,14 +311,14 @@ export function Team() {
 
         {/* Team Members Grid */}
         <div className="w-full">
-          <div className="flex flex-col gap-24">
+          <div ref={gridRef} className="flex flex-col gap-24 mb-64">
             {/* Group team members into rows of 3 */}
             {Array.from({ length: Math.ceil(teamMembers.length / 3) }).map((_, rowIndex) => {
               const rowMembers = teamMembers.slice(rowIndex * 3, (rowIndex + 1) * 3)
               return (
                 <div key={rowIndex} className="flex flex-col md:flex-row items-start md:justify-between gap-8 md:gap-10">
                   {rowMembers.map((member, memberIndex) => (
-                    <div key={memberIndex} className="flex gap-8 items-end flex-1 md:max-w-[33.333%]">
+                    <div key={memberIndex} className="team-member-item flex gap-8 items-end flex-1 md:max-w-[33.333%]">
                       {/* Team member image */}
                       <div className="relative shrink-0 w-[115px] h-[115px] rounded-sm overflow-hidden">
                         <img 
@@ -198,6 +352,41 @@ export function Team() {
               )
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Join Us Section */}
+      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-24 md:gap-[98px] items-start mt-64 mb-32">
+        {/* Left side - Title and CTA */}
+        <div className="flex flex-col gap-12 flex-1">
+          <h2 className="text-[76px] leading-tight font-serif text-black">
+            Want to join us?{" "}
+            <span className="italic">Passionate</span>. Dedicated.
+          </h2>
+          <a
+            href="https://gammagruppe.ch/jobs/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[20px] leading-[1.5] uppercase text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] cursor-pointer transition-opacity duration-300 ease-out hover:opacity-60 group"
+          >
+            <span className="inline-block">
+              [
+              <span className="inline-block mx-2 transition-all duration-300 ease-out group-hover:mx-4">
+                View Jobs
+              </span>
+              ]
+            </span>
+          </a>
+        </div>
+
+        {/* Right side - Description paragraphs */}
+        <div className="flex flex-col gap-12 flex-1">
+          <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
+            We are always looking for motivated individuals who share our passion for excellence and hospitality. Whether you're an experienced chef, service professional, or looking to start your career in the culinary world, we offer opportunities to grow and excel in a dynamic, supportive environment.
+          </p>
+          <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
+            Join a team that values dedication, creativity, and the art of creating memorable experiences. At HAUTE, you'll work alongside talented professionals in an atmosphere that encourages both personal and professional development.
+          </p>
         </div>
       </div>
     </section>

@@ -39,6 +39,17 @@
     position: relative;
   }
   
+  /* Text selection styling */
+  ::selection {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+  
+  ::-moz-selection {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+  
   .font-serif {
     font-family: var(--font-instrument-serif), serif;
   }
