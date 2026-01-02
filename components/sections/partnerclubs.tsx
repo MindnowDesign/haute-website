@@ -5,24 +5,114 @@ import { gsap, ScrollTrigger } from "@/lib/gsap"
 
 // Partner clubs data from haute.ch
 const partnerClubs = [
-  { name: "Club zur Geduld", location: "Winterthur, Switzerland" },
-  { name: "Club de Bâle", location: "Basel, Switzerland" },
-  { name: "Airport Club", location: "Frankfurt, Germany" },
-  { name: "Business Club", location: "Hamburg, Germany" },
-  { name: "Drivers & Business Club", location: "Munich, Germany" },
-  { name: "Wirtschaftsclub", location: "Düsseldorf, Germany" },
-  { name: "Havanna Lounge", location: "Bremen, Germany" },
-  { name: "Rotonda Business-Club", location: "Köln, Germany" },
-  { name: "Kitzbühel Country Club", location: "Kitzbühel, Austria" },
-  { name: "Am Hof 8", location: "Vienna, Austria" },
-  { name: "Saint James Club", location: "Paris, France" },
-  { name: "National Liberal Club", location: "London, England" },
-  { name: "Kjarval", location: "Reykjavik, Island" },
-  { name: "Capital Club", location: "Dubai" },
-  { name: "Capital Club", location: "Nairobi, Kenia" },
-  { name: "Tower Club", location: "Singapore" },
-  { name: "Candela Nuevo", location: "Melbourne, Australia" },
-  { name: "The Forest and Stream Club", location: "Quebec, Canada" },
+  { 
+    name: "Club zur Geduld", 
+    location: "Winterthur, Switzerland",
+    image: "/Asset/Partnerclubs/Haute_ClubzurGeduld_Winterthur-600x600-1.jpg",
+    link: "http://www.zurgeduld.ch/public/club_zur_geduld/club_zur_geduld"
+  },
+  { 
+    name: "Club de Bâle", 
+    location: "Basel, Switzerland",
+    image: "/Asset/Partnerclubs/Haute_ClubdeBale-600x600-1.jpg",
+    link: "https://clubdebale.ch/"
+  },
+  { 
+    name: "Airport Club", 
+    location: "Frankfurt, Germany",
+    image: "/Asset/Partnerclubs/Haute_AurportClub_Frankfurt-600x600-1.jpg",
+    link: "http://www.airportclub.de/"
+  },
+  { 
+    name: "Business Club", 
+    location: "Hamburg, Germany",
+    image: "/Asset/Partnerclubs/Haute_BusinessClubHamburg-600x600-1.jpg",
+    link: "http://www.bch.de/"
+  },
+  { 
+    name: "Drivers & Business Club", 
+    location: "Munich, Germany",
+    image: "/Asset/Partnerclubs/Drivers-Club.png",
+    link: "https://www.driversclub.biz/de"
+  },
+  { 
+    name: "Wirtschaftsclub", 
+    location: "Düsseldorf, Germany",
+    image: "/Asset/Partnerclubs/Haute_Wirtschaftsclub_Duesseldorf-600x600-1.jpg",
+    link: "http://www.wirtschaftsclubduesseldorf.de/"
+  },
+  { 
+    name: "Havanna Lounge", 
+    location: "Bremen, Germany",
+    image: "/Asset/Partnerclubs/Haute_HavannaLounge_Bremen-600x600-1.jpg",
+    link: "http://www.havannalounge.de/"
+  },
+  { 
+    name: "Rotonda Business-Club", 
+    location: "Köln, Germany",
+    image: "/Asset/Partnerclubs/Haute_RotondaBusiness-Club_Koeln-600x600-1.jpg",
+    link: "http://www.rotonda.de/"
+  },
+  { 
+    name: "Kitzbühel Country Club", 
+    location: "Kitzbühel, Austria",
+    image: "/Asset/Partnerclubs/Haute_KitzbuehelCountryClub_Kitzbuehel-600x600-1.jpg",
+    link: "https://www.kitzbuehel.cc/"
+  },
+  { 
+    name: "Am Hof 8", 
+    location: "Vienna, Austria",
+    image: "/Asset/Partnerclubs/Unbenannt-e1719922549248.jpg",
+    link: "https://amhof8.com/"
+  },
+  { 
+    name: "Saint James Club", 
+    location: "Paris, France",
+    image: "/Asset/Partnerclubs/Haute_SaintJamesClub_Paris-600x600-1.jpg",
+    link: "http://www.saintjamesclub.com/"
+  },
+  { 
+    name: "National Liberal Club", 
+    location: "London, England",
+    image: "/Asset/Partnerclubs/Haute_NationalLiberalClub_London-600x600-1.jpg",
+    link: "http://www.nlc.org.uk/"
+  },
+  { 
+    name: "Kjarval", 
+    location: "Reykjavik, Island",
+    image: "/Asset/Partnerclubs/Kjarval.jpg",
+    link: "https://www.kjarval.com/"
+  },
+  { 
+    name: "Capital Club", 
+    location: "Dubai",
+    image: "/Asset/Partnerclubs/Haute_CapitalClub_Dubai-600x600-1.jpg",
+    link: "https://capitalclubdubai.com/"
+  },
+  { 
+    name: "Capital Club", 
+    location: "Nairobi, Kenia",
+    image: "/Asset/Partnerclubs/Haute_CapitalClub_Nairobi-600x600-1.jpg",
+    link: "http://www.capitalclubea.com/"
+  },
+  { 
+    name: "Tower Club", 
+    location: "Singapore",
+    image: "/Asset/Partnerclubs/Haute_Towerlub_Singapore-600x600-1.jpg",
+    link: "http://www.tower-club.com.sg/"
+  },
+  { 
+    name: "Candela Nuevo", 
+    location: "Melbourne, Australia",
+    image: "/Asset/Partnerclubs/Haute_CandelaNuevo_Melbourne-600x600-1.jpg",
+    link: "http://www.candelanuevo.com.au/"
+  },
+  { 
+    name: "The Forest and Stream Club", 
+    location: "Quebec, Canada",
+    image: "/Asset/Partnerclubs/Forrest-and-Stream-e1719922523470.jpg",
+    link: "https://forestandstream.ca/"
+  },
 ]
 
 export function Partnerclubs() {
@@ -49,61 +139,154 @@ export function Partnerclubs() {
       columns[columnIndex].push(item)
     })
 
-    // Crea le animazioni per ogni colonna con lag differenziato
-    const scrollTriggers: ScrollTrigger[] = []
+    // Stato per tracciare lo scroll
+    let lastScrollY = window.scrollY
+    let scrollVelocity = 0
+    let isScrolling = false
+    let scrollTimeout: NodeJS.Timeout | null = null
+    const currentPositions = new Map<HTMLElement, number>()
+    const targetPositions = new Map<HTMLElement, number>()
 
-    columns.forEach((column, columnIndex) => {
-      const centerColumn = (columnCount - 1) / 2
-      const distanceFromCenter = Math.abs(columnIndex - centerColumn)
-      
-      // Calcola l'ammontare di movimento (colonne esterne si muovono di più)
-      const movementAmount = distanceFromCenter * 40 // Da 0 a 80px
-      
-      // Calcola il lag (colonne esterne hanno più lag = scrub più alto)
-      const lagAmount = 0.5 + (distanceFromCenter * 0.4) // Da 0.5 a 1.3
-
-      column.forEach((item) => {
-        // Crea un'animazione che muove l'elemento su e giù durante lo scroll
-        // Quando la sezione entra nella viewport, l'elemento si sposta
-        // Quando esce, torna alla posizione originale (y: 0)
-        const st = ScrollTrigger.create({
-          trigger: section,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: lagAmount, // Valore più alto = più lag
-          onUpdate: (self) => {
-            // Calcola lo spostamento basato sul progresso
-            // Progress va da 0 (inizio) a 1 (fine)
-            // Vogliamo che sia 0 quando la sezione è fuori dalla viewport
-            const progress = self.progress
-            // Usa una curva per un movimento più naturale
-            const easedProgress = progress * (2 - progress) // Ease out
-            const y = (easedProgress - 0.5) * movementAmount * 2
-            
-            gsap.set(item, { y: y })
-          },
-        })
-
-        scrollTriggers.push(st)
-      })
+    // Inizializza le posizioni
+    items.forEach(item => {
+      currentPositions.set(item, 0)
+      targetPositions.set(item, 0)
     })
 
+    // Funzione di lerp (interpolazione)
+    const lerp = (start: number, end: number, factor: number) => {
+      return start + (end - start) * factor
+    }
+
+    // Funzione per aggiornare le posizioni target basate sulla velocità dello scroll
+    const updateTargetPositions = (velocity: number) => {
+      const scrollDirection = velocity > 0 ? 1 : -1
+      const velocityMagnitude = Math.abs(velocity)
+      const maxVelocity = 15 // Velocità massima considerata (aumentata per movimento più smooth)
+      const normalizedVelocity = Math.min(velocityMagnitude / maxVelocity, 1)
+      // Applica un easing per movimento più naturale
+      const easedVelocity = normalizedVelocity * normalizedVelocity // Ease out
+
+      columns.forEach((column, columnIndex) => {
+        const centerColumn = (columnCount - 1) / 2
+        const distanceFromCenter = Math.abs(columnIndex - centerColumn)
+        
+        // Le colonne centrali non si muovono, quelle esterne si muovono di più (ancora più accentuato)
+        const movementAmount = distanceFromCenter * 55 * easedVelocity // Da 0 a ~110px (ancora più accentuato)
+        const targetY = -scrollDirection * movementAmount // Invertito: scroll verso il basso = movimento verso l'alto
+
+        column.forEach((item) => {
+          targetPositions.set(item, targetY)
+        })
+      })
+    }
+
+    // Crea una mappa per associare ogni item alla sua colonna effettiva
+    // Questo è importante per gli ultimi 3 item che sono centrati (colonne 2, 3, 4)
+    const itemToColumnMap = new Map<HTMLElement, number>()
+    items.forEach((item, index) => {
+      // Controlla se è uno degli ultimi 3 item
+      const isLastThree = index >= items.length - 3
+      if (isLastThree) {
+        // Gli ultimi 3 item sono nelle colonne 2, 3, 4
+        const positionInLastThree = index - (items.length - 3)
+        const actualColumn = 2 + positionInLastThree // 2, 3, 4
+        itemToColumnMap.set(item, actualColumn)
+      } else {
+        // Per gli altri item, usa la colonna normale
+        const columnIndex = index % columnCount
+        itemToColumnMap.set(item, columnIndex)
+      }
+    })
+
+    // Funzione di animazione con lag differenziato
+    const animate = () => {
+      items.forEach((item) => {
+        const currentY = currentPositions.get(item) || 0
+        const targetY = targetPositions.get(item) || 0
+        
+        // Usa la colonna effettiva dalla mappa
+        const columnIndex = itemToColumnMap.get(item) ?? (items.indexOf(item) % columnCount)
+        const centerColumn = (columnCount - 1) / 2
+        const distanceFromCenter = Math.abs(columnIndex - centerColumn)
+        
+        // Lag: colonne centrali seguono subito, quelle esterne hanno più lag (ancora più accentuato)
+        const lagFactor = 0.05 + (distanceFromCenter * 0.1) // Da 0.05 a 0.45 (ancora più lag = effetto più visibile)
+        
+        // Interpola con lag
+        const newY = lerp(currentY, targetY, lagFactor)
+        currentPositions.set(item, newY)
+        
+        // Applica la trasformazione
+        gsap.set(item, { y: newY })
+      })
+
+      requestAnimationFrame(animate)
+    }
+
+    // Gestore scroll
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      scrollVelocity = currentScrollY - lastScrollY
+      lastScrollY = currentScrollY
+
+      // Controlla se siamo nella sezione
+      const rect = section.getBoundingClientRect()
+      const isInViewport = rect.top < window.innerHeight && rect.bottom > 0
+
+      if (isInViewport && Math.abs(scrollVelocity) > 0.3) {
+        isScrolling = true
+        updateTargetPositions(scrollVelocity)
+
+        // Reset il timeout
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout)
+        }
+
+        // Quando lo scroll si ferma, torna alla posizione originale (più tempo per transizione smooth)
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false
+          items.forEach(item => {
+            targetPositions.set(item, 0)
+          })
+        }, 150) // 150ms dopo l'ultimo scroll (più smooth)
+      } else if (!isScrolling) {
+        // Se non stiamo scrollando, torna a 0
+        items.forEach(item => {
+          targetPositions.set(item, 0)
+        })
+      }
+    }
+
+    // Inizia l'animazione
+    animate()
+
+    // Aggiungi listener
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
     return () => {
-      // Cleanup: rimuovi tutti gli ScrollTriggers
-      scrollTriggers.forEach(st => st.kill())
+      // Cleanup
+      window.removeEventListener('scroll', handleScroll)
+      
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
       
       // Reset trasformazioni
       items.forEach(item => {
         gsap.set(item, { y: 0 })
       })
+      
+      currentPositions.clear()
+      targetPositions.clear()
     }
   }, [])
 
   return (
     <section ref={sectionRef} className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div className="container mx-auto px-4 mb-32">
-        <div className="max-w-6xl mx-auto text-center mb-24">
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-12 text-black">
+        <div className="max-w-6xl mx-auto text-center mb-32">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-20 text-black">
             <span className="italic">HAUTE</span> partner clubs. Collaborative. <span className="italic">Connected</span>. Global.
           </h1>
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 text-left">
@@ -121,12 +304,12 @@ export function Partnerclubs() {
       <div className="container mx-auto px-4">
         <div 
           ref={gridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-12"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-16 gap-y-20"
           style={{
             '--column-count': '5',
             '--column-size': 'minmax(0, 1fr)',
-            '--c-gap': '2rem',
-            '--r-gap': '3rem',
+            '--c-gap': '4rem',
+            '--r-gap': '5rem',
           } as React.CSSProperties}
         >
         {partnerClubs.map((club, index) => {
@@ -146,14 +329,21 @@ export function Partnerclubs() {
             key={index}
             className={`grid__item flex flex-col gap-4 ${gridColumnClass}`}
           >
-            <div 
-              className="grid__item-img w-full aspect-[3/4] bg-gray-300 overflow-hidden"
-              style={{
-                backgroundImage: `url(https://via.placeholder.com/300x400?text=${encodeURIComponent(club.name)})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+            <a
+              href={club.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grid__item-link block w-full aspect-[5/6] overflow-hidden cursor-pointer group"
+            >
+              <div 
+                className="grid__item-img w-full h-full bg-gray-300 transition-transform duration-500 ease-out group-hover:scale-105"
+                style={{
+                  backgroundImage: `url(${club.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+            </a>
             <figcaption className="grid__item-caption text-[16px] leading-[1.2] text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
               <div className="font-medium">{club.name}</div>
               <div className="text-[#8b8b8b] text-sm mt-1">{club.location}</div>
