@@ -76,7 +76,8 @@ export function Header() {
     { label: "Culinary", href: "/culinary" },
     { label: "Team", href: "/team" },
     { label: "Events", href: "/events" },
-    { label: "Contact", href: "/contact" },
+    { label: "Become a member", href: "/contact" },
+    { label: "Partnerclubs", href: "/partnerclubs" },
     { label: "Jobs", href: "/jobs" },
   ]
 
@@ -117,20 +118,22 @@ export function Header() {
       >
         <div className="container mx-auto h-full relative">
           {/* Top Bar - z-index più alto per essere sopra il menu content */}
-          <div className="absolute top-0 left-0 right-0 px-4 pt-[57px] flex items-center justify-between z-10">
-            {/* Left: Login */}
-            <CTAButton href="/login" className="text-white hover:opacity-60 relative z-10">
-              LOGIN
-            </CTAButton>
+          <div className="fixed top-0 left-0 right-0 z-[101] bg-black">
+            <div className="container mx-auto px-4 flex items-center justify-between h-20">
+              {/* Left: Login */}
+              <CTAButton href="/login" className="text-white hover:opacity-60">
+                LOGIN
+              </CTAButton>
 
-            {/* Right: Close Button */}
-            <button
-              onClick={toggleMenu}
-              className="flex items-center justify-center w-[85px] h-7 cursor-pointer hover:opacity-70 transition-opacity p-2 -m-2 relative z-10"
-              aria-label="Close Menu"
-            >
-              <X className="w-[26px] h-[26px] text-white" strokeWidth={2.5} />
-            </button>
+              {/* Right: Close Button */}
+              <button
+                onClick={toggleMenu}
+                className="flex items-center justify-end w-[85px] h-7 cursor-pointer hover:opacity-70 transition-opacity relative"
+                aria-label="Close Menu"
+              >
+                <X className="w-[26px] h-[26px] text-white" strokeWidth={2.5} />
+              </button>
+            </div>
           </div>
 
           {/* Menu Content */}
@@ -139,18 +142,18 @@ export function Header() {
             className="flex flex-col items-center justify-center h-full pointer-events-none"
           >
             {/* Menu Title */}
-            <h2 className="font-serif text-white text-[143.556px] leading-normal text-center mb-[53px] pointer-events-none">
+            <h2 className="font-serif text-white text-[130px] leading-normal text-center mb-[40px] pointer-events-none">
               Menu
             </h2>
 
             {/* Menu Items */}
-            <nav className="flex flex-col gap-[40px] items-center pointer-events-auto">
+            <nav className="flex flex-col gap-[32px] items-center pointer-events-auto">
               {menuItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={toggleMenu}
-                  className="text-[#8b8b8b] text-[45px] leading-[1.2] font-['Helvetica Neue', Helvetica, Arial, sans-serif] hover:text-white transition-colors duration-300 text-center"
+                  className="text-[#8b8b8b] text-[38px] leading-[1.2] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] hover:text-white transition-colors duration-300 text-center"
                 >
                   {item.label}
                 </Link>
