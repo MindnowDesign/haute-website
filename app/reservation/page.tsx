@@ -125,7 +125,7 @@ export default function ReservationPage() {
   }
 
   return (
-    <main className="min-h-screen pt-20 bg-[#ECEBE8]">
+    <main className="min-h-screen pt-16 bg-[#ECEBE8]">
       <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
         <div className="container mx-auto px-4 mb-32">
           {/* Header */}

@@ -45,7 +45,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen pt-20 bg-[#ECEBE8]">
+    <main className="min-h-screen pt-16 bg-[#ECEBE8]">
       <section className="min-h-[calc(100vh-5rem)] py-24">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">

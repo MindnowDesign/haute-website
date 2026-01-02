@@ -134,7 +134,7 @@ export function Team() {
     <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div className="container mx-auto px-4 mb-32">
         {/* Header Section */}
-        <div className="max-w-6xl mx-auto text-center mb-32">
+        <div className="max-w-6xl mx-auto text-center mb-40">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-20 text-black">
             HAUTE. Warm.
             <br />
@@ -165,8 +165,8 @@ export function Team() {
                 <div key={rowIndex} className="flex flex-col md:flex-row items-start md:justify-between gap-8 md:gap-10">
                   {rowMembers.map((member, memberIndex) => (
                     <div key={memberIndex} className="flex gap-8 items-end flex-1 md:max-w-[33.333%]">
-                      {/* Team member image - 97px x 97px */}
-                      <div className="relative shrink-0 w-[97px] h-[97px] rounded-sm overflow-hidden">
+                      {/* Team member image */}
+                      <div className="relative shrink-0 w-[115px] h-[115px] rounded-sm overflow-hidden">
                         <img 
                           src={member.image || "/Asset/Team/platzhalter.jpg"} 
                           alt={member.name}
