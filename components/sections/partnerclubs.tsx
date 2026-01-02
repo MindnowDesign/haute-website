@@ -30,7 +30,7 @@ export function Partnerclubs() {
   return (
     <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       <div className="container mx-auto px-4 mb-32">
-        <div className="max-w-6xl mx-auto text-center mb-16">
+        <div className="max-w-6xl mx-auto text-center mb-24">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-12 text-black">
             <span className="italic">HAUTE</span> partner clubs. Collaborative. <span className="italic">Connected</span>. Global.
           </h1>
@@ -62,10 +62,22 @@ export function Partnerclubs() {
             '--r-gap': '3rem',
           } as React.CSSProperties}
         >
-        {partnerClubs.map((club, index) => (
+        {partnerClubs.map((club, index) => {
+          // Centra gli ultimi 3 item (18 totali, quindi indici 15, 16, 17)
+          // Per centrare 3 item in una griglia a 5 colonne, li posizioniamo nelle colonne 2, 3, 4
+          const isLastThree = index >= partnerClubs.length - 3
+          let gridColumnClass = ""
+          if (isLastThree) {
+            const positionInLastThree = index - (partnerClubs.length - 3)
+            // Posizioni: 0 -> colonna 2, 1 -> colonna 3, 2 -> colonna 4
+            const colStartClasses = ["lg:col-start-2", "lg:col-start-3", "lg:col-start-4"]
+            gridColumnClass = colStartClasses[positionInLastThree] || ""
+          }
+          
+          return (
           <figure 
             key={index}
-            className="grid__item flex flex-col gap-4"
+            className={`grid__item flex flex-col gap-4 ${gridColumnClass}`}
           >
             <div 
               className="grid__item-img w-full aspect-[3/4] bg-gray-300 overflow-hidden"
@@ -80,7 +92,8 @@ export function Partnerclubs() {
               <div className="text-[#8b8b8b] text-sm mt-1">{club.location}</div>
             </figcaption>
           </figure>
-        ))}
+          )
+        })}
         </div>
       </div>
     </section>
