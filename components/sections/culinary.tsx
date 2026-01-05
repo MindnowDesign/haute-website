@@ -1,15 +1,20 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { CTAButton } from "@/components/ui/cta-button"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
 
 export function Culinary() {
+  const imageRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
 
   const menuSections = [
-    { label: "Menu Lunch", href: "#" },
-    { label: "Menu Dinner", href: "#" },
-    { label: "Wine List", href: "#" },
-    { label: "Bar Menu", href: "#" },
+    { label: "Menu Lunch", href: "https://www.haute.ch/download/HAUTE-Speisekarte-Lunch.pdf", image: "/Asset/Culinary/menu-lunch.jpg" },
+    { label: "Menu Dinner", href: "https://www.haute.ch/download/HAUTE-Speisekarte-Dinner.pdf", image: "/Asset/Culinary/menu-dinner.jpg" },
+    { label: "Wine List", href: "https://www.haute.ch/download/HAUTE-Weinkarte.pdf", image: "/Asset/Culinary/wine-list.jpg" },
+    { label: "Bar Menu", href: "https://www.haute.ch/download/Barkarte%20HAUTE.pdf", image: "/Asset/Culinary/bar-menu.jpg" },
   ]
 
   const sustainabilityPoints = [
@@ -31,10 +36,96 @@ export function Culinary() {
     },
   ]
 
+  useEffect(() => {
+    if (!imageRef.current || !sectionRef.current) return
+
+    const image = imageRef.current
+    const section = sectionRef.current
+
+    // Dimensioni iniziali fisse - aumentate per renderla più larga
+    const INITIAL_WIDTH = 650
+    const INITIAL_HEIGHT = Math.round(650 * (374 / 560)) // Mantiene l'aspect ratio originale
+    const ASPECT_RATIO = INITIAL_HEIGHT / INITIAL_WIDTH
+
+    // Funzione per calcolare le dimensioni finali
+    const getFinalDimensions = () => {
+      // Trova il container parent (div.container mx-auto px-4)
+      const container = image.closest('.container')
+      if (!container) {
+        // Fallback: usa viewport meno un piccolo padding
+        const containerPadding = 16 * 2 // 16px per lato per sicurezza
+        const finalWidth = window.innerWidth - containerPadding
+        const finalHeight = finalWidth * ASPECT_RATIO
+        return { width: finalWidth, height: finalHeight }
+      }
+
+      // Calcola la larghezza disponibile nel container
+      // Usiamo la larghezza del container meno solo un piccolo padding per sicurezza
+      // Questo permette all'immagine di essere più larga e arrivare quasi ai bordi
+      const containerRect = container.getBoundingClientRect()
+      // Riduciamo il padding sottratto per rendere l'immagine più larga
+      const containerPadding = 16 * 2 // Solo 16px per lato invece di 32px
+      const finalWidth = containerRect.width - containerPadding
+      const finalHeight = finalWidth * ASPECT_RATIO
+      
+      return { width: finalWidth, height: finalHeight }
+    }
+
+    // Imposta le dimensioni iniziali esplicitamente
+    gsap.set(image, {
+      width: INITIAL_WIDTH,
+      height: INITIAL_HEIGHT,
+    })
+
+    // Crea l'animazione con ScrollTrigger
+    const ctx = gsap.context(() => {
+      const finalDims = getFinalDimensions()
+
+      // Animazione della larghezza e altezza mantenendo l'aspect ratio
+      gsap.fromTo(
+        image,
+        {
+          width: INITIAL_WIDTH,
+          height: INITIAL_HEIGHT,
+        },
+        {
+          width: finalDims.width,
+          height: finalDims.height,
+          scrollTrigger: {
+            trigger: image,
+            start: "top 80%", // Inizia quando l'immagine entra nella viewport
+            end: "bottom 30%", // Finisce quando l'immagine è al 30% della viewport
+            scrub: 1.2, // Smooth scroll con 1.2s di lag per fluidità
+            invalidateOnRefresh: true, // Ricalcola su resize
+            markers: false, // Set to true per debug
+          },
+          ease: "power1.out",
+        }
+      )
+    }, section)
+
+    // Gestisci il resize della finestra
+    const handleResize = () => {
+      ScrollTrigger.refresh()
+    }
+
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      ctx.revert()
+      window.removeEventListener("resize", handleResize)
+      // Reset alle dimensioni originali
+      gsap.set(image, {
+        width: INITIAL_WIDTH,
+        height: INITIAL_HEIGHT,
+      })
+    }
+  }, [])
+
   return (
-    <section className="relative py-32 bg-[#ECEBE8] overflow-hidden">
+    <section ref={sectionRef} className="relative py-32 bg-[#ECEBE8] overflow-hidden">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 mb-32">
+      <div className="container mx-auto px-4 mb-48">
         <div className="max-w-6xl mx-auto text-center mb-32">
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif mb-20 text-black">
             HAUTE. Creative.
@@ -53,17 +144,40 @@ export function Culinary() {
       </div>
 
       {/* Menu Sections */}
-      <div className="container mx-auto px-4 mb-32">
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start w-full">
+      <div className="container mx-auto px-4 mb-48">
+        <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start w-full mb-24">
           {menuSections.map((item, index) => (
             <Link
               key={index}
               href={item.href}
-              className="flex flex-col gap-4 flex-1 w-full"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col gap-4 flex-1 w-full group"
             >
-              <div className="h-[283px] w-full bg-[#d9d9d9] relative overflow-hidden" />
+              <div 
+                className="w-full relative overflow-hidden"
+                style={{
+                  aspectRatio: '315 / 353',
+                }}
+              >
+                <div
+                  className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-110"
+                  style={{
+                    backgroundImage: `url(${item.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                />
+              </div>
               <p className="text-[18px] leading-[1.5] text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] uppercase">
-                [ {item.label} ]
+                <span className="inline-block">
+                  [
+                  <span className="inline-block mx-2 transition-all duration-300 ease-out group-hover:mx-4">
+                    {item.label}
+                  </span>
+                  ]
+                </span>
               </p>
             </Link>
           ))}
@@ -71,22 +185,35 @@ export function Culinary() {
       </div>
 
       {/* Recognized for Excellence Section */}
-      <div className="container mx-auto px-4 mb-32">
+      <div className="container mx-auto px-4 mb-48">
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-5xl md:text-6xl font-serif mb-12 text-black">
+          <h2 className="text-5xl md:text-6xl font-serif mb-16 text-black">
             Recognized for excellence!
           </h2>
-          <div className="h-[374px] w-full max-w-[560px] mx-auto bg-[#d9d9d9] relative overflow-hidden" />
+          <div className="flex justify-center">
+            <div 
+              ref={imageRef}
+              className="h-[434px] w-[650px] relative overflow-hidden"
+              style={{ 
+                willChange: "width, height",
+                transformOrigin: "center center",
+                backgroundImage: "url(/Asset/Culinary/Recognized-for-excellence.png)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {/* Sustainability Points */}
-      <div className="container mx-auto px-4 mb-32 mt-32">
+      <div className="container mx-auto px-4 mb-48 mt-48">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">
+          <div className="flex flex-col gap-20 md:gap-28 lg:gap-36 mb-16">
             {sustainabilityPoints.map((point, index) => {
               // Calcola offset progressivo più marcato
-              const offsets = [0, 120, 280, 480] // Valori in px per 01, 02, 03, 04
+              const offsets = [180, 320, 500, 720] // Valori in px per 01, 02, 03, 04 (spostati ancora più a destra)
               const marginLeft = offsets[index] || 0
               
               return (
@@ -100,7 +227,7 @@ export function Culinary() {
                 <p className="text-[22px] leading-[1.5] text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-2">
                   {point.number}
                 </p>
-                <p className="text-[16px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
+                <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
                   {point.text}
                 </p>
               </div>
@@ -111,24 +238,32 @@ export function Culinary() {
       </div>
 
       {/* Logos and Final Statement */}
-      <div className="container mx-auto px-4 mb-32">
+      <div className="container mx-auto px-4 mb-48">
         <div className="max-w-6xl mx-auto flex flex-col items-center gap-10 md:gap-12">
           {/* Logos */}
           <div className="flex items-center justify-center gap-8">
-            <div className="w-[70px] h-[70px] bg-[#d9d9d9] rounded-full shrink-0" />
-            <div className="w-[64px] h-[70px] bg-[#d9d9d9] rounded shrink-0" />
+            <Image 
+              src="/Asset/Culinary/Swisstainable.png" 
+              alt="Swisstainable" 
+              width={70} 
+              height={70} 
+              className="shrink-0"
+            />
+            <Image 
+              src="/Asset/Culinary/Okgo.png" 
+              alt="OK:GO" 
+              width={64} 
+              height={70} 
+              className="shrink-0"
+            />
           </div>
 
           {/* Final Statement */}
-          <p className="text-4xl md:text-5xl lg:text-[52px] font-serif text-black text-center leading-tight max-w-5xl">
+          <p className="text-4xl md:text-5xl lg:text-[52px] font-serif text-black text-center leading-loose max-w-5xl">
             This <span className="italic">motivates</span> us to teach our customers and guests how to use resources sparingly and to make a joint <span className="italic">contribution</span> to a better world. Because as a host, HAUTE wants to give only the <span className="italic">best</span>, always and everywhere!
           </p>
-        </div>
-      </div>
 
-      {/* Online Reservations CTA */}
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto text-center">
+          {/* Online Reservations CTA */}
           <CTAButton href="/reservation">
             Online Reservations
           </CTAButton>
