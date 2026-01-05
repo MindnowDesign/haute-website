@@ -3,6 +3,7 @@ import { Instrument_Serif } from "next/font/google"
 import "./globals.css"
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider"
 import { Header } from "@/components/ui/header"
+import { Footer } from "@/components/ui/footer"
 
 const instrumentSerif = Instrument_Serif({ 
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
         <SmoothScrollProvider>
           <Header />
           {children}
+          <Footer />
         </SmoothScrollProvider>
       </body>
     </html>

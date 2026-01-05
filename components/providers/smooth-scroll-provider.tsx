@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import Lenis from "lenis"
+import { ScrollTrigger } from "@/lib/gsap"
 
 export function SmoothScrollProvider({
   children,
@@ -22,12 +23,18 @@ export function SmoothScrollProvider({
 
     function raf(time: number) {
       lenis.raf(time)
+      // Sincronizza ScrollTrigger con Lenis
+      ScrollTrigger.update()
       requestAnimationFrame(raf)
     }
 
     requestAnimationFrame(raf)
 
+    // Aggiorna ScrollTrigger quando Lenis scrolla
+    lenis.on("scroll", ScrollTrigger.update)
+
     return () => {
+      lenis.off("scroll", ScrollTrigger.update)
       lenis.destroy()
     }
   }, [])

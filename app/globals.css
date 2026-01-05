@@ -170,6 +170,53 @@
       transition: none !important;
     }
   }
+
+  /* Footer link hover effect */
+  .footer-link {
+    position: relative;
+    display: inline-block;
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .footer-link::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: white;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .footer-link:hover {
+    opacity: 1;
+    color: white;
+  }
+
+  .footer-link:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .footer-link:not(:hover)::after {
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-link,
+    .footer-link::after {
+      transition: none !important;
+    }
+    
+    .footer-link::after {
+      display: none;
+    }
+  }
 }
 
 

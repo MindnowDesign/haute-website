@@ -6,12 +6,13 @@ import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { Logo3D } from "./logo-3d"
 import { CTAButton } from "./cta-button"
-import { gsap } from "@/lib/gsap"
+import { gsap, ScrollTrigger } from "@/lib/gsap"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuOverlayRef = useRef<HTMLDivElement>(null)
   const menuContentRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -69,6 +70,32 @@ export function Header() {
     }
   }, [isMenuOpen])
 
+  // Nascondi l'header quando tocca il footer (logica globale per tutte le pagine)
+  useEffect(() => {
+    if (!headerRef.current) return
+
+    const footer = document.querySelector('footer')
+    if (!footer) return
+
+    const headerHeight = headerRef.current.offsetHeight
+
+    const ctx = gsap.context(() => {
+      gsap.to(headerRef.current, {
+        y: -headerHeight, // Sposta l'header verso l'alto (completamente fuori dalla viewport)
+        scrollTrigger: {
+          trigger: footer,
+          start: "top top", // Inizia quando il top del footer tocca il top della viewport (dove c'è l'header)
+          end: `top+=${headerHeight} top`, // Finisce quando il footer è avanzato dell'altezza dell'header
+          scrub: 1, // Smooth scroll
+          invalidateOnRefresh: true,
+        },
+        ease: "power2.out",
+      })
+    }, headerRef)
+
+    return () => ctx.revert()
+  }, [])
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
@@ -86,7 +113,8 @@ export function Header() {
   return (
     <>
       <header 
-        className="fixed top-0 left-0 right-0 z-50 bg-[#ECEBE8] border-b border-black/10 transition-transform duration-300 translate-y-0"
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 z-50 bg-[#ECEBE8] border-b border-black/10"
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-20">
           {/* Left: Login */}
