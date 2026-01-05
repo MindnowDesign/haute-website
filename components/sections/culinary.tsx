@@ -49,7 +49,7 @@ export function Culinary() {
 
     // Funzione per calcolare le dimensioni finali
     const getFinalDimensions = () => {
-      // Trova il container parent (div.container mx-auto px-4)
+      // Trova il container parent (div.container mx-auto)
       const container = image.closest('.container')
       if (!container) {
         // Fallback: usa viewport meno un piccolo padding
@@ -60,12 +60,10 @@ export function Culinary() {
       }
 
       // Calcola la larghezza disponibile nel container
-      // Usiamo la larghezza del container meno solo un piccolo padding per sicurezza
-      // Questo permette all'immagine di essere più larga e arrivare quasi ai bordi
+      // Il container ha mx-auto che crea la stessa larghezza dell'header
+      // L'immagine può espandersi fino alla larghezza completa del container
       const containerRect = container.getBoundingClientRect()
-      // Riduciamo il padding sottratto per rendere l'immagine più larga
-      const containerPadding = 16 * 2 // Solo 16px per lato invece di 32px
-      const finalWidth = containerRect.width - containerPadding
+      const finalWidth = containerRect.width
       const finalHeight = finalWidth * ASPECT_RATIO
       
       return { width: finalWidth, height: finalHeight }
@@ -185,25 +183,25 @@ export function Culinary() {
       </div>
 
       {/* Recognized for Excellence Section */}
-      <div className="container mx-auto px-4 mb-48">
-        <div className="max-w-6xl mx-auto text-center">
+      <div className="container mx-auto mb-48">
+        <div className="max-w-6xl mx-auto text-center px-4">
           <h2 className="text-5xl md:text-6xl font-serif mb-16 text-black">
             Recognized for excellence!
           </h2>
-          <div className="flex justify-center">
-            <div 
-              ref={imageRef}
-              className="h-[434px] w-[650px] relative overflow-hidden"
-              style={{ 
-                willChange: "width, height",
-                transformOrigin: "center center",
-                backgroundImage: "url(/Asset/Culinary/Recognized-for-excellence.png)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-            />
-          </div>
+        </div>
+        <div className="flex justify-center">
+          <div 
+            ref={imageRef}
+            className="h-[434px] w-[650px] relative overflow-hidden"
+            style={{ 
+              willChange: "width, height",
+              transformOrigin: "center center",
+              backgroundImage: "url(/Asset/Culinary/Recognized-for-excellence.png)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
         </div>
       </div>
 

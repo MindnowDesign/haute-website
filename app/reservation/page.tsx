@@ -253,6 +253,7 @@ export default function ReservationPage() {
                   value={formData.date}
                   onChange={(e) => handleChange("date", e.target.value)}
                   className="mt-3 h-12 text-base px-4 border-black bg-[#ECEBE8] text-black"
+                  min={new Date().toISOString().split("T")[0]}
                 />
                 {errors.date && (
                   <p className="text-sm text-red-600 mt-1">{errors.date}</p>

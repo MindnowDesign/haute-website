@@ -298,7 +298,7 @@ export function Partnerclubs() {
               With a HAUTE membership, exclusivity doesn't stop at the city limits. Our partnerships with select member clubs around the globe grant you stylish access to exceptional places worldwide, from Dubai to Hong Kong, from London to Melbourne.
             </p>
             <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
-              As a HAUTE member, you are part of an international network built on trust, quality, and hospitality. We personally coordinate your reservations Telephone +41 43 344 72 71 oder <a href="mailto:welcome@haute.ch" className="text-black hover:underline">welcome@haute.ch</a> and ensure that even far from Zurich, you are welcomed like a familiar face.
+              As a HAUTE member, you are part of an international network built on trust, quality, and hospitality. We personally coordinate your reservations Telephone <a href="tel:+41433447271" className="text-black hover:underline">+41 43 344 72 71</a> oder <a href="mailto:welcome@haute.ch" className="text-black hover:underline">welcome@haute.ch</a> and ensure that even far from Zurich, you are welcomed like a familiar face.
             </p>
           </div>
         </div>
