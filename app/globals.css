@@ -123,12 +123,12 @@
 
   /* Partnerclubs grid hover effect */
   .partnerclubs-grid:has(.grid__item-link:hover) .grid__item-link:not(:hover) {
-    opacity: 0.3;
+    opacity: 0.6;
     transition: opacity 0.25s ease-out;
   }
 
   .partnerclubs-grid:has(.grid__item-link:hover) .grid__item:not(:has(.grid__item-link:hover)) .grid__item-caption {
-    opacity: 0.3;
+    opacity: 0.6;
     transition: opacity 0.25s ease-out;
   }
 

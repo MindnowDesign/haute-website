@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { Logo3D } from "./logo-3d"
 import { CTAButton } from "./cta-button"
@@ -11,6 +12,7 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuOverlayRef = useRef<HTMLDivElement>(null)
   const menuContentRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     if (!menuOverlayRef.current || !menuContentRef.current) return
@@ -142,22 +144,33 @@ export function Header() {
             className="flex flex-col items-center justify-center h-full pointer-events-none"
           >
             {/* Menu Title */}
-            <h2 className="font-serif text-white text-[130px] leading-normal text-center mb-[40px] pointer-events-none">
+            <h2 className="font-serif text-white text-[100px] leading-normal text-center mb-[40px] pointer-events-none">
               Menu
             </h2>
 
             {/* Menu Items */}
             <nav className="flex flex-col gap-[32px] items-center pointer-events-auto">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={toggleMenu}
-                  className="text-[#8b8b8b] text-[38px] leading-[1.2] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] hover:text-white transition-colors duration-300 text-center"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {menuItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={toggleMenu}
+                    className={`text-[24px] leading-[1.2] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] uppercase text-center group transition-colors duration-300 ${
+                      isActive ? "text-white" : "text-[#8b8b8b] hover:text-white"
+                    }`}
+                  >
+                    <span className="inline-block">
+                      [
+                      <span className={`inline-block mx-2 transition-all duration-300 ease-out group-hover:mx-4 ${isActive ? "underline" : ""}`}>
+                        {item.label}
+                      </span>
+                      ]
+                    </span>
+                  </Link>
+                )
+              })}
             </nav>
           </div>
         </div>

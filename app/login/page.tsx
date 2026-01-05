@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
+import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { GlideOverButton } from "@/components/ui/glide-over-button"
@@ -12,6 +13,101 @@ export default function LoginPage() {
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+  
+  // Mouse movement effect for image
+  const imageContainerRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLDivElement>(null)
+  const targetPositionRef = useRef({ x: 0, y: 0 })
+  const currentPositionRef = useRef({ x: 0, y: 0 })
+  const animationFrameRef = useRef<number | null>(null)
+
+  // Smooth interpolation function with more gentle easing
+  const lerp = (start: number, end: number, factor: number): number => {
+    return start + (end - start) * factor
+  }
+
+  // Animation loop for smooth movement
+  useEffect(() => {
+    const animate = () => {
+      if (!imageRef.current || !imageContainerRef.current) return
+
+      const currentX = currentPositionRef.current.x
+      const currentY = currentPositionRef.current.y
+      const targetX = targetPositionRef.current.x
+      const targetY = targetPositionRef.current.y
+
+      // Very smooth interpolation with gentle easing factor (lower = smoother)
+      const easingFactor = 0.05
+      const newX = lerp(currentX, targetX, easingFactor)
+      const newY = lerp(currentY, targetY, easingFactor)
+
+      currentPositionRef.current = { x: newX, y: newY }
+
+      // Apply transform to image with 5% zoom (scale 1.05) and translation
+      imageRef.current.style.transform = `scale(1.05) translate(${newX}px, ${newY}px)`
+
+      animationFrameRef.current = requestAnimationFrame(animate)
+    }
+
+    animationFrameRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [])
+
+  // Mouse move handler - tracks mouse anywhere on the page
+  useEffect(() => {
+    const container = imageContainerRef.current
+    if (!container) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!container || !imageRef.current) return
+
+      const rect = container.getBoundingClientRect()
+      
+      // Get mouse position relative to container center
+      const mouseX = e.clientX - rect.left
+      const mouseY = e.clientY - rect.top
+
+      // Calculate center of container
+      const centerX = rect.width / 2
+      const centerY = rect.height / 2
+
+      // Calculate offset from center (normalized to -1 to 1)
+      const offsetX = (mouseX - centerX) / centerX
+      const offsetY = (mouseY - centerY) / centerY
+
+      // Image is zoomed 5% (scale 1.05), so it's 5% larger than container
+      // Maximum movement is limited to 2% of container size for very subtle effect
+      // This ensures the image never shows edges (we have 5% zoom, so 2% movement is safe)
+      const containerWidth = rect.width
+      const containerHeight = rect.height
+      
+      // Maximum movement: 2% of container for very subtle effect
+      const maxMovementPercentage = 0.02 // 2%
+      const maxMovementX = containerWidth * maxMovementPercentage
+      const maxMovementY = containerHeight * maxMovementPercentage
+
+      // Clamp the movement to ensure image never goes outside bounds
+      const targetX = Math.max(-maxMovementX, Math.min(maxMovementX, offsetX * maxMovementX))
+      const targetY = Math.max(-maxMovementY, Math.min(maxMovementY, offsetY * maxMovementY))
+
+      targetPositionRef.current = {
+        x: targetX,
+        y: targetY,
+      }
+    }
+
+    // Listen to mouse movement on entire window
+    window.addEventListener("mousemove", handleMouseMove)
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove)
+    }
+  }, [])
 
   const handleChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -108,18 +204,23 @@ export default function LoginPage() {
             
             {/* Right: Image */}
             <div className="hidden lg:block">
-              <div className="relative w-full h-[700px] bg-gray-200">
-                {/* Placeholder for image - replace with Next.js Image component when image is available */}
-                {/* Example:
-                <Image
-                  src="/path-to-image.jpg"
-                  alt="Login"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                */}
-                <div className="w-full h-full bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300" />
+              <div 
+                ref={imageContainerRef}
+                className="relative w-full h-[700px] bg-gray-200 overflow-hidden"
+              >
+                <div 
+                  ref={imageRef}
+                  className="absolute inset-0 w-full h-full transition-transform duration-0"
+                  style={{ willChange: "transform" }}
+                >
+                  <Image
+                    src="/Asset/Login/Login.jpg"
+                    alt="Login"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
