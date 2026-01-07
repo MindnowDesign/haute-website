@@ -10,6 +10,7 @@ import { gsap, ScrollTrigger } from "@/lib/gsap"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [selectedLanguage, setSelectedLanguage] = useState<"EN" | "DE" | "FR">("EN")
   const menuOverlayRef = useRef<HTMLDivElement>(null)
   const menuContentRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
@@ -200,6 +201,26 @@ export function Header() {
                 )
               })}
             </nav>
+
+            {/* Language Selector */}
+            <div className="flex gap-6 items-center mt-[96px] pointer-events-auto">
+              {(["EN", "DE", "FR"] as const).map((lang) => {
+                const isSelected = selectedLanguage === lang
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => setSelectedLanguage(lang)}
+                    className={`text-[20px] leading-[1.2] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] uppercase transition-colors duration-300 ${
+                      isSelected
+                        ? "text-white underline"
+                        : "text-[#8b8b8b] hover:text-white"
+                    }`}
+                  >
+                    {lang}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>
