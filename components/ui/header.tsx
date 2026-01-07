@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
-import { Logo3D } from "./logo-3d"
+import { Logo } from "./logo"
 import { CTAButton } from "./cta-button"
 import { gsap, ScrollTrigger } from "@/lib/gsap"
 
@@ -122,8 +122,12 @@ export function Header() {
           <CTAButton href="/login">LOGIN</CTAButton>
 
           {/* Center: Logo */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Logo3D />
+          <Link 
+            href="/" 
+            className="absolute left-1/2 -translate-x-1/2"
+            data-header-logo
+          >
+            <Logo className="w-[120px] h-auto" />
           </Link>
 
           {/* Right: Menu Button */}
