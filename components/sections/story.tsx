@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { gsap } from "@/lib/gsap"
 
 interface HoverableWord {
   word: string
@@ -17,9 +16,6 @@ export function Story() {
   const currentPositionRef = useRef({ x: 0, y: 0 })
   const preferredSideRef = useRef<'right' | 'left' | null>(null)
   const animationLoopRef = useRef<number | null>(null)
-  const paragraph1Ref = useRef<HTMLParagraphElement>(null)
-  const paragraph2Ref = useRef<HTMLParagraphElement>(null)
-  const paragraphsContainerRef = useRef<HTMLDivElement>(null)
 
   // Order matters - process longer phrases first to avoid partial matches
   const hoverableWords: HoverableWord[] = [
@@ -27,7 +23,7 @@ export function Story() {
     { word: "exclusive club", imageId: "exclusive" },
     { word: "Zurich", imageId: "zurich" },
     { word: "glass", imageId: "glass" },
-    { word: "Alps", imageId: "alps" },
+    { word: "alps", imageId: "alps" },
   ]
 
   // Smooth interpolation function
@@ -46,26 +42,23 @@ export function Story() {
     const distance = Math.sqrt(dx * dx + dy * dy)
     
     // If we're close enough, snap to target
-    if (distance < 0.5) {
+    if (distance < 1.5) {
       currentPositionRef.current = { ...target }
       setImagePosition({ ...target })
       animationLoopRef.current = null
       return
     }
     
-    // Ease-out: faster when far, slower when close
-    // Use a higher lerp factor when far, lower when close
-    // This creates the ease-out effect (starts fast, slows down)
-    const maxDistance = 300 // Maximum distance for normalization
+    // More stable easing: less dramatic curve for smoother, more predictable movement
+    const maxDistance = 200 // Reduced max distance for faster normalization
     const normalizedDistance = Math.min(distance / maxDistance, 1)
     
-    // Apply cubic curve to make the effect even more pronounced
-    // Cube the normalized distance to create a very dramatic ease-out
-    const easedDistance = normalizedDistance * normalizedDistance * normalizedDistance
+    // Use a gentler quadratic curve instead of cubic for more stability
+    const easedDistance = normalizedDistance * normalizedDistance
     
-    // Lerp factor: higher when far (0.55), lower when close (0.04)
-    // This makes it start very fast and slow down significantly as it approaches - very pronounced
-    const lerpFactor = 0.04 + (easedDistance * 0.51) // Range: 0.04 to 0.55
+    // Lerp factor: higher minimum (0.12) and lower maximum (0.35) for more stable, responsive movement
+    // This creates a smoother, less "jittery" animation
+    const lerpFactor = 0.12 + (easedDistance * 0.23) // Range: 0.12 to 0.35
     
     // Interpolate
     current.x = lerp(current.x, target.x, lerpFactor)
@@ -178,128 +171,6 @@ export function Story() {
   }
 
 
-  // Line-by-line mask animation for paragraphs
-  useEffect(() => {
-    if (!paragraph1Ref.current || !paragraph2Ref.current || !paragraphsContainerRef.current) return
-
-    const paragraph1 = paragraph1Ref.current
-    const paragraph2 = paragraph2Ref.current
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Function to wrap text into lines and create mask effect
-            const animateLines = (element: HTMLElement) => {
-              const text = element.textContent || ""
-              const lines: HTMLElement[] = []
-              
-              // Create a temporary element to measure line breaks
-              const tempDiv = document.createElement("div")
-              tempDiv.style.position = "absolute"
-              tempDiv.style.visibility = "hidden"
-              tempDiv.style.width = `${element.offsetWidth}px`
-              tempDiv.style.fontSize = window.getComputedStyle(element).fontSize
-              tempDiv.style.fontFamily = window.getComputedStyle(element).fontFamily
-              tempDiv.style.lineHeight = window.getComputedStyle(element).lineHeight
-              tempDiv.style.padding = window.getComputedStyle(element).padding
-              document.body.appendChild(tempDiv)
-              
-              const words = text.split(" ")
-              let currentLine = ""
-              let previousHeight = 0
-              
-              words.forEach((word, index) => {
-                const testText = currentLine + (currentLine ? " " : "") + word
-                tempDiv.textContent = testText
-                const currentHeight = tempDiv.offsetHeight
-                
-                if (currentHeight > previousHeight && currentLine) {
-                  // Line break occurred, create line wrapper
-                  const lineWrapper = document.createElement("span")
-                  lineWrapper.style.display = "block"
-                  lineWrapper.style.overflow = "hidden"
-                  lineWrapper.style.position = "relative"
-                  
-                  const lineText = document.createElement("span")
-                  lineText.style.display = "block"
-                  lineText.textContent = currentLine
-                  lineText.style.transform = "translateY(-100%)"
-                  
-                  lineWrapper.appendChild(lineText)
-                  lines.push(lineText)
-                  
-                  currentLine = word
-                } else {
-                  currentLine = testText
-                }
-                previousHeight = currentHeight
-              })
-              
-              if (currentLine) {
-                const lineWrapper = document.createElement("span")
-                lineWrapper.style.display = "block"
-                lineWrapper.style.overflow = "hidden"
-                lineWrapper.style.position = "relative"
-                
-                const lineText = document.createElement("span")
-                lineText.style.display = "block"
-                lineText.textContent = currentLine
-                lineText.style.transform = "translateY(-100%)"
-                
-                lineWrapper.appendChild(lineText)
-                lines.push(lineText)
-              }
-              
-              document.body.removeChild(tempDiv)
-              
-              // Clear and append line wrappers
-              element.textContent = ""
-              lines.forEach((lineText) => {
-                const wrapper = lineText.parentElement as HTMLElement
-                element.appendChild(wrapper)
-              })
-              
-              return lines
-            }
-
-            const lines1 = animateLines(paragraph1)
-            const lines2 = animateLines(paragraph2)
-
-            // Animate paragraph 1 lines (slide down from top with smooth easing)
-            gsap.to(lines1, {
-              y: 0,
-              duration: 1.0,
-              stagger: 0.1,
-              ease: "power2.out",
-            })
-
-            // Animate paragraph 2 lines with delay
-            gsap.to(lines2, {
-              y: 0,
-              duration: 1.0,
-              stagger: 0.1,
-              delay: 0.3,
-              ease: "power2.out",
-            })
-
-            // Unobserve after animation starts
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      {
-        threshold: 0.2,
-        rootMargin: "0px 0px -100px 0px",
-      }
-    )
-
-    observer.observe(paragraphsContainerRef.current)
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -310,7 +181,7 @@ export function Story() {
     }
   }, [])
 
-  const text = `High above the rooftops of Zurich, HAUTE was established over twenty years ago an exclusive club restaurant where glass, light, and the breathtaking panoramic views over the city, lake, and Alps merge into an elegant and relaxed atmosphere.`
+  const text = `High above the rooftops of Zurich, HAUTE was established over twenty years ago an exclusive club restaurant where glass, light, and the breathtaking panoramic views over the city, lake, and alps merge into an elegant and relaxed atmosphere.`
   
   // Sort by length (longest first) to avoid partial matches
   const sortedWords = [...hoverableWords].sort((a, b) => b.word.length - a.word.length)
@@ -370,7 +241,7 @@ export function Story() {
       parts.push(
         <span
           key={`word-${keyIndex++}`}
-          className="text-black underline cursor-pointer hover:text-black transition-colors"
+          className="text-black italic cursor-pointer hover:text-black transition-colors"
           onMouseEnter={(e) => handleMouseEnter(match.word.imageId, e)}
           onMouseMove={(e) => handleMouseMove(match.word.imageId, e)}
           onMouseLeave={handleMouseLeave}
@@ -384,20 +255,43 @@ export function Story() {
 
     // Add remaining text
     if (lastIndex < text.length) {
-      parts.push(
-        <span key={`text-${keyIndex++}`} className="text-[#8b8b8b]">
-          {text.substring(lastIndex)}
-        </span>
-      )
+      const remainingText = text.substring(lastIndex)
+      // Check if we need to add a <br /> after "merge"
+      const mergeIndex = remainingText.indexOf(' merge')
+      if (mergeIndex !== -1) {
+        const mergeEndIndex = mergeIndex + 6 // " merge" is 6 characters (space + "merge")
+        // Add text up to and including " merge"
+        parts.push(
+          <span key={`text-${keyIndex++}`} className="text-[#8b8b8b]">
+            {remainingText.substring(0, mergeEndIndex)}
+          </span>
+        )
+        // Add <br />
+        parts.push(<br key={`br-${keyIndex++}`} />)
+        // Add remaining text after "merge"
+        if (mergeEndIndex < remainingText.length) {
+          parts.push(
+            <span key={`text-${keyIndex++}`} className="text-[#8b8b8b]">
+              {remainingText.substring(mergeEndIndex)}
+            </span>
+          )
+        }
+      } else {
+        parts.push(
+          <span key={`text-${keyIndex++}`} className="text-[#8b8b8b]">
+            {remainingText}
+          </span>
+        )
+      }
     }
 
     return parts
   }
 
   return (
-    <section className="relative py-32 bg-[#ECEBE8] min-h-[400px]">
+    <section id="story-section" className="relative py-32 bg-[#ECEBE8] min-h-[400px]">
       <div className="container mx-auto px-4">
-        <p className="text-[58px] leading-[1.4] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] indent-[3em]">
+        <p className="text-[68px] leading-[1.4] font-normal font-serif indent-[2.5em]">
           {renderText()}
         </p>
 
@@ -432,20 +326,11 @@ export function Story() {
         )}
 
         {/* Two paragraphs side by side */}
-        <div 
-          ref={paragraphsContainerRef}
-          className="mt-24 max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12"
-        >
-          <p 
-            ref={paragraph1Ref}
-            className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1"
-          >
+        <div className="mt-24 max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12">
+          <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
             On the 13th floor, the glass-enclosed terrace and bar invite guests to begin the evening in style with an aperitif.
           </p>
-          <p 
-            ref={paragraph2Ref}
-            className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1"
-          >
+          <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
             One floor higher, the club restaurant welcomes its guests with a sense of spaciousness, clean design, and fresh perspectives - offering first-class regional cuisine and sustainable indulgence.
           </p>
         </div>

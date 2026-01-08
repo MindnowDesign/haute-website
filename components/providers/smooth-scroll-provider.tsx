@@ -21,6 +21,9 @@ export function SmoothScrollProvider({
       touchMultiplier: 2,
     })
 
+    // Esponi Lenis nel window per accesso globale
+    ;(window as any).lenis = lenis
+
     function raf(time: number) {
       lenis.raf(time)
       // Sincronizza ScrollTrigger con Lenis
@@ -35,6 +38,7 @@ export function SmoothScrollProvider({
 
     return () => {
       lenis.off("scroll", ScrollTrigger.update)
+      delete (window as any).lenis
       lenis.destroy()
     }
   }, [])

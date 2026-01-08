@@ -37,6 +37,11 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #ECEBE8;
     position: relative;
+    overflow-x: hidden;
+  }
+  
+  html {
+    overflow-x: hidden;
   }
   
   /* Text selection styling */

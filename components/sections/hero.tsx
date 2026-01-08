@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import ImageTrail, { ImageTrailItem } from "@/components/fancy/image/image-trail"
-import Letter3DSwap from "@/components/fancy/text/letter-3d-swap"
+import { useEffect, useRef } from "react"
+import Lenis from "lenis"
 
 // Array di immagini con aspect ratio diversi e URL da Unsplash
 const images = [
@@ -33,45 +34,43 @@ const images = [
 ]
 
 export function Hero() {
+  const lenisRef = useRef<Lenis | null>(null)
+
+  useEffect(() => {
+    // Ottieni l'istanza di Lenis dal window se disponibile
+    // Lenis viene creato nel SmoothScrollProvider
+    const getLenis = () => {
+      const lenisInstance = (window as any).lenis
+      if (lenisInstance) {
+        lenisRef.current = lenisInstance
+      }
+    }
+
+    // Prova a ottenere Lenis immediatamente e dopo un breve delay
+    getLenis()
+    const timer = setTimeout(getLenis, 100)
+    
+    return () => clearTimeout(timer)
+  }, [])
+
   const handleScrollDown = () => {
-    const nextSection = document.querySelector("section:not(:first-of-type)")
+    const nextSection = document.getElementById('story-section')
     if (nextSection) {
-      nextSection.scrollIntoView({ behavior: "smooth" })
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(nextSection, {
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        })
+      } else {
+        // Fallback a scrollIntoView se Lenis non è disponibile
+        nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
     }
   }
 
   return (
-    <section className="relative h-screen w-screen flex items-center justify-center bg-[#ECEBE8] text-black overflow-hidden">
-      {/* Testo principale */}
-      <div className="container mx-auto px-4 text-center relative z-10">
-        <h1 className="text-8xl md:text-9xl lg:text-[12rem] font-serif text-black leading-tight">
-          Exclusive club
-          <br />
-          in Zurich
-        </h1>
-      </div>
-
-      {/* Scroll Down Button */}
-      <button
-        onClick={handleScrollDown}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 cursor-pointer bg-transparent border-none p-0"
-        type="button"
-      >
-        <Letter3DSwap
-          mainClassName="text-sm uppercase tracking-wider text-black/60 hover:text-black transition-colors duration-300 font-sans inline-block"
-          frontFaceClassName="text-black/60 hover:text-black"
-          secondFaceClassName="text-black/60 hover:text-black"
-          rotateDirection="top"
-          staggerDuration={0.03}
-          staggerFrom="first"
-          transition={{ type: "spring", damping: 25, stiffness: 160 }}
-          as="span"
-        >
-          scroll down
-        </Letter3DSwap>
-      </button>
-
-      {/* Image Trail */}
+    <section className="relative h-screen w-full flex items-center justify-center bg-[#ECEBE8] text-black overflow-hidden">
+      {/* Image Trail - sopra il titolo ma sotto le scritte, deve ricevere gli eventi mouse */}
       <ImageTrail
         className="absolute inset-0 z-20"
         threshold={150}
@@ -111,6 +110,61 @@ export function Hero() {
           </ImageTrailItem>
         ))}
       </ImageTrail>
+
+      {/* Scritta a sinistra - EST. */}
+      <div className="absolute top-1/2 left-4 md:left-8 lg:left-16 -translate-y-1/2 z-30 pointer-events-none">
+        <p 
+          className="text-sm md:text-base uppercase font-['Helvetica Neue', Helvetica, Arial, sans-serif] tracking-wider opacity-40"
+          style={{ mixBlendMode: 'difference' }}
+        >
+          EST.
+        </p>
+      </div>
+
+      {/* Scritta a destra - anno di apertura */}
+      <div className="absolute top-1/2 right-4 md:right-8 lg:right-16 -translate-y-1/2 z-30 pointer-events-none">
+        <p 
+          className="text-sm md:text-base uppercase font-['Helvetica Neue', Helvetica, Arial, sans-serif] tracking-wider opacity-40"
+          style={{ mixBlendMode: 'difference' }}
+        >
+          2004
+        </p>
+      </div>
+
+      {/* Container principale con titolo e "A high-flying idea" */}
+      <div className="container mx-auto px-4 text-center relative z-30 pointer-events-none">
+        {/* Scritta sopra al titolo */}
+        <p 
+          className="text-sm md:text-base uppercase font-['Helvetica Neue', Helvetica, Arial, sans-serif] tracking-wider mb-4 md:mb-6 opacity-40"
+          style={{ mixBlendMode: 'difference' }}
+        >
+          A high-flying idea.
+        </p>
+
+        {/* Titolo principale */}
+        <h1 className="text-8xl md:text-9xl lg:text-[12rem] font-serif text-black leading-tight">
+          Exclusive club
+          <br />
+          in Zurich
+        </h1>
+        
+        {/* Link scroll down sotto al titolo con animazione hover - deve avere pointer-events */}
+        <div className="mt-16 md:mt-20 lg:mt-24 pointer-events-auto inline-block">
+          <button
+            onClick={handleScrollDown}
+            className="text-[20px] leading-[1.5] uppercase text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] cursor-pointer transition-opacity duration-300 ease-out hover:opacity-60 group"
+            style={{ mixBlendMode: 'difference' }}
+          >
+            <span className="inline-block">
+              [
+              <span className="inline-block mx-2 transition-all duration-300 ease-out group-hover:mx-4">
+                scroll down
+              </span>
+              ]
+            </span>
+          </button>
+        </div>
+      </div>
     </section>
   )
 }
