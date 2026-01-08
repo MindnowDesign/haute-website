@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { gsap, ScrollTrigger } from "@/lib/gsap"
+import { ChevronDown } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -27,6 +28,7 @@ export function MembershipAdmission() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -131,11 +133,23 @@ export function MembershipAdmission() {
           </h1>
         </div>
 
-        {/* Hero Image and Paragraphs together */}
+        {/* Two paragraphs side by side */}
+        <div className="max-w-6xl mx-auto mb-20">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12 text-left">
+            <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
+              Membership at HAUTE is granted through a carefully curated process based on personal recommendation. Each prospective member requires two references from existing members, ensuring our community maintains its exclusive character.
+            </p>
+            <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
+              Memberships operate on an annual cycle from January to December, with automatic renewal unless termination is requested by the end of October. New memberships are allocated at the beginning of each year, and we maintain a waiting list throughout the year.
+            </p>
+          </div>
+        </div>
+
+        {/* Hero Image and Membership Tiers */}
         <div className="mb-48">
           {/* Hero Image - aspect ratio 1145:545 */}
           <div 
-            className="w-full bg-gray-400 relative overflow-hidden mb-12"
+            className="w-full bg-gray-400 relative overflow-hidden mb-48"
             style={{
               aspectRatio: '1145 / 545',
             }}
@@ -144,7 +158,7 @@ export function MembershipAdmission() {
               ref={heroImageRef}
               className="absolute inset-0 bg-gray-400"
               style={{
-                backgroundImage: `url(/Asset/Events/exclusive.jpg)`,
+                backgroundImage: `url(https://i.pinimg.com/1200x/5e/7c/84/5e7c84f026dd7f46140495a42a99f35a.jpg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -154,46 +168,133 @@ export function MembershipAdmission() {
             />
           </div>
 
-          {/* Two Paragraphs */}
-          <div className="container mx-auto px-4">
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 text-left">
-              <div className="flex-1">
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  Membership at HAUTE is granted through a carefully curated process based on personal recommendation.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  Each prospective member requires two references from existing members, ensuring our community maintains its exclusive character.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  Memberships operate on an annual cycle from January to December, with automatic renewal unless termination is requested by the end of October.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-                  New memberships are allocated at the beginning of each year, and we maintain a waiting list throughout the year.
-                </p>
-              </div>
-              <div className="flex-1">
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  We offer three distinct membership tiers to suit different needs.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  The Individual membership, priced at CHF 2,000.00 annually, is personal and non-transferable.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] mb-6">
-                  The Partner membership, at CHF 2,400.00 per year, includes a second card for a spouse or life partner residing at the same address.
-                </p>
-                <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-                  For corporate clients, our Corporate membership is available at CHF 6,000.00 per year for five individuals, with the flexibility to extend to a maximum of eight persons at an additional CHF 1,200.00 per person.
-                </p>
-              </div>
+          {/* Membership Tiers Section */}
+          <div className="container mx-auto px-4 my-20">
+            <div className="max-w-6xl mx-auto text-left">
+              {/* Title */}
+              <h2 className="text-[64px] leading-tight font-serif text-black mb-12 text-center">
+                Membership tiers
+              </h2>
+              
+              {/* Membership Tiers Cards */}
+              <div className="flex flex-col md:flex-row gap-6">
+                  {/* Individual Card */}
+                  <div 
+                    className="flex-1 bg-[#ECEBE8] cursor-pointer transition-all duration-500 ease-out"
+                    onClick={() => setExpandedCard(expandedCard === 'individual' ? null : 'individual')}
+                  >
+                    <div className="relative overflow-hidden" style={{ aspectRatio: '552 / 300' }}>
+                      <div
+                        className="absolute inset-0 transition-transform duration-700 ease-out"
+                        style={{
+                          backgroundImage: `url(https://i.pinimg.com/736x/ee/6a/c4/ee6ac47e6d4b713b20c361e34defac12.jpg)`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          transform: expandedCard === 'individual' ? 'scale(1.1)' : 'scale(1)',
+                        }}
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl md:text-2xl font-serif mb-4 text-black italic flex items-center justify-between">
+                        <span>Individual</span>
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-500 ${expandedCard === 'individual' ? 'rotate-180' : ''}`} />
+                      </h3>
+                      <div 
+                        className="overflow-hidden transition-all duration-500 ease-out"
+                        style={{
+                          maxHeight: expandedCard === 'individual' ? '500px' : '0',
+                          opacity: expandedCard === 'individual' ? 1 : 0,
+                        }}
+                      >
+                        <p className="text-[18px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] !text-[#8b8b8b]">
+                          The Individual membership, priced at CHF 2,000.00 annually, is personal and non-transferable.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Partner Card */}
+                  <div 
+                    className="flex-1 bg-[#ECEBE8] cursor-pointer transition-all duration-500 ease-out"
+                    onClick={() => setExpandedCard(expandedCard === 'partner' ? null : 'partner')}
+                  >
+                    <div className="relative overflow-hidden" style={{ aspectRatio: '552 / 300' }}>
+                      <div
+                        className="absolute inset-0 transition-transform duration-700 ease-out"
+                        style={{
+                          backgroundImage: `url(https://i.pinimg.com/736x/91/45/f2/9145f2ad97120c7e8f16dd2503976716.jpg)`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          transform: expandedCard === 'partner' ? 'scale(1.1)' : 'scale(1)',
+                        }}
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl md:text-2xl font-serif mb-4 text-black italic flex items-center justify-between">
+                        <span>Partner</span>
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-500 ${expandedCard === 'partner' ? 'rotate-180' : ''}`} />
+                      </h3>
+                      <div 
+                        className="overflow-hidden transition-all duration-500 ease-out"
+                        style={{
+                          maxHeight: expandedCard === 'partner' ? '500px' : '0',
+                          opacity: expandedCard === 'partner' ? 1 : 0,
+                        }}
+                      >
+                        <p className="text-[18px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] !text-[#8b8b8b]">
+                          The Partner membership, at CHF 2,400.00 per year, includes a second card for a spouse or life partner residing at the same address.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Corporate Card */}
+                  <div 
+                    className="flex-1 bg-[#ECEBE8] cursor-pointer transition-all duration-500 ease-out"
+                    onClick={() => setExpandedCard(expandedCard === 'corporate' ? null : 'corporate')}
+                  >
+                    <div className="relative overflow-hidden" style={{ aspectRatio: '552 / 300' }}>
+                      <div
+                        className="absolute inset-0 transition-transform duration-700 ease-out"
+                        style={{
+                          backgroundImage: `url(https://i.pinimg.com/1200x/d3/0a/f5/d30af5bbcd44551c15d32380934d61f9.jpg)`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundRepeat: 'no-repeat',
+                          transform: expandedCard === 'corporate' ? 'scale(1.1)' : 'scale(1)',
+                        }}
+                      />
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl md:text-2xl font-serif mb-4 text-black italic flex items-center justify-between">
+                        <span>Corporate</span>
+                        <ChevronDown className={`w-5 h-5 transition-transform duration-500 ${expandedCard === 'corporate' ? 'rotate-180' : ''}`} />
+                      </h3>
+                      <div 
+                        className="overflow-hidden transition-all duration-500 ease-out"
+                        style={{
+                          maxHeight: expandedCard === 'corporate' ? '500px' : '0',
+                          opacity: expandedCard === 'corporate' ? 1 : 0,
+                        }}
+                      >
+                        <p className="text-[18px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] !text-[#8b8b8b]">
+                          For corporate clients, our Corporate membership is available at CHF 6,000.00 per year for five individuals, with the flexibility to extend to a maximum of eight persons at an additional CHF 1,200.00 per person.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
           </div>
         </div>
 
         {/* Membership Application Form */}
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 mt-32">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-serif mb-12 text-black text-center">
-              Membership Application
+            <h2 className="text-[64px] leading-tight font-serif mb-12 text-black text-center">
+              Membership application
             </h2>
             <form onSubmit={handleSubmit} className="space-y-10">
               {/* First Name and Last Name */}
