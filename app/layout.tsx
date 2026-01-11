@@ -14,6 +14,9 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Haute Club Zurich",
   description: "Exclusive Club in Zurich",
+  icons: {
+    icon: "/Favicon/icon.png",
+  },
 }
 
 export default function RootLayout({
