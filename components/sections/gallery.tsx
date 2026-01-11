@@ -19,13 +19,22 @@ export function Gallery() {
   const momentumRef = useRef(0)
   const lastTimeRef = useRef(0)
 
-  // Generate 12 images with different heights and widths
-  const images = Array.from({ length: 12 }, (_, i) => ({
-    id: i + 1,
-    width: [562, 552, 367, 552, 562, 552, 367, 552, 562, 552, 367, 552][i],
-    height: [629, 358, 566, 449, 629, 358, 566, 449, 629, 358, 566, 449][i],
-    text: `[ LOREM IPSUM ${i + 1} ]`,
-  }))
+  // Gallery images with varied aspect ratios for dynamism
+  // Mix of portrait, landscape, and square formats
+  const images = [
+    { id: 1, src: '/Asset/Location Gallery/location-gallery-01.jpg', width: 562, height: 750, aspectRatio: 'portrait-tall' }, // 3:4 portrait
+    { id: 2, src: '/Asset/Location Gallery/location-gallery-02.jpg', width: 750, height: 500, aspectRatio: 'landscape-wide' }, // 3:2 landscape
+    { id: 3, src: '/Asset/Location Gallery/location-gallery-03.jpg', width: 500, height: 650, aspectRatio: 'portrait-medium' }, // ~4:5 portrait
+    { id: 4, src: '/Asset/Location Gallery/location-gallery-04.jpg', width: 600, height: 800, aspectRatio: 'portrait-tall' }, // 3:4 portrait
+    { id: 5, src: '/Asset/Location Gallery/location-gallery-05.jpg', width: 800, height: 450, aspectRatio: 'landscape-wide' }, // 16:9 landscape
+    { id: 6, src: '/Asset/Location Gallery/location-gallery-06.jpg', width: 550, height: 700, aspectRatio: 'portrait-medium' }, // ~4:5 portrait
+    { id: 7, src: '/Asset/Location Gallery/location-gallery-07.jpg', width: 700, height: 525, aspectRatio: 'landscape-medium' }, // 4:3 landscape
+    { id: 8, src: '/Asset/Location Gallery/location-gallery-08.jpg', width: 480, height: 720, aspectRatio: 'portrait-tall' }, // 2:3 portrait
+    { id: 9, src: '/Asset/Location Gallery/location-gallery-09.jpg', width: 650, height: 650, aspectRatio: 'square' }, // 1:1 square
+    { id: 10, src: '/Asset/Location Gallery/location-gallery-10.jpg', width: 720, height: 480, aspectRatio: 'landscape-wide' }, // 3:2 landscape
+    { id: 11, src: '/Asset/Location Gallery/location-gallery-11.jpg', width: 520, height: 780, aspectRatio: 'portrait-tall' }, // 2:3 portrait
+    { id: 12, src: '/Asset/Location Gallery/location-gallery-12.jpg', width: 680, height: 510, aspectRatio: 'landscape-medium' }, // 4:3 landscape
+  ]
 
   // Duplicate images for infinite scroll
   const duplicatedImages = [...images, ...images]
@@ -294,16 +303,23 @@ export function Gallery() {
                   ref={(el) => {
                     imageInnerRefs.current[index] = el
                   }}
-                  className="bg-gray-300 w-full h-full"
+                  className="w-full h-full"
                   style={{
                     width: `${image.width}px`,
                     height: `${image.height}px`,
                   }}
-                />
+                >
+                  <img
+                    src={image.src}
+                    alt={`Location gallery ${image.id}`}
+                    className="w-full h-full object-cover"
+                    style={{
+                      width: `${image.width}px`,
+                      height: `${image.height}px`,
+                    }}
+                  />
+                </div>
               </div>
-              <p className="text-[16px] leading-[1.2] text-black font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-                {image.text}
-              </p>
             </div>
           ))}
         </div>

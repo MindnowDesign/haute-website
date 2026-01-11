@@ -12,7 +12,7 @@ export function MembershipIntro() {
               For members. Personal.{" "}
               <span className="italic">Exclusive</span>. Connected.
             </h2>
-            <CTAButton>Become a member</CTAButton>
+            <CTAButton href="/contact">Become a member</CTAButton>
           </div>
 
           {/* Right side - Description paragraphs */}

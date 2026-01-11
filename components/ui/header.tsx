@@ -11,10 +11,55 @@ import { gsap, ScrollTrigger } from "@/lib/gsap"
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState<"EN" | "DE" | "FR">("EN")
+  const [isHero2Page, setIsHero2Page] = useState(false)
+  const [isAtFooter, setIsAtFooter] = useState(false)
   const menuOverlayRef = useRef<HTMLDivElement>(null)
   const menuContentRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const pathname = usePathname()
+
+  // Controlla se siamo sulla homepage-2 e se l'hero è visibile
+  useEffect(() => {
+    if (!headerRef.current) return
+    
+    const checkHero2 = () => {
+      const isOnHomepage2 = pathname === '/homepage-2' || document.body.hasAttribute('data-hero-2')
+      setIsHero2Page(isOnHomepage2)
+    }
+    
+    checkHero2()
+    
+    // Osserva i cambiamenti nell'attributo del body
+    const observer = new MutationObserver(checkHero2)
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-hero-2'] })
+    
+    // Usa ScrollTrigger per rilevare quando l'hero esce dalla viewport
+    const heroSection = document.querySelector('[data-hero-section]')
+    if (heroSection && pathname === '/homepage-2') {
+      const ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: heroSection,
+          start: "bottom top", // Quando il bottom dell'hero tocca il top della viewport
+          end: "bottom top",
+          onEnter: () => {
+            // Quando l'hero esce dalla viewport, torna normale
+            setIsHero2Page(false)
+          },
+          onEnterBack: () => {
+            // Quando torni indietro e l'hero entra nella viewport, torna trasparente
+            setIsHero2Page(true)
+          },
+        })
+      }, headerRef)
+      
+      return () => {
+        observer.disconnect()
+        ctx.revert()
+      }
+    }
+    
+    return () => observer.disconnect()
+  }, [pathname])
 
   useEffect(() => {
     if (!menuOverlayRef.current || !menuContentRef.current) return
@@ -71,26 +116,33 @@ export function Header() {
     }
   }, [isMenuOpen])
 
-  // Nascondi l'header quando tocca il footer (logica globale per tutte le pagine)
+  // Inverti i colori dell'header quando arriva al footer
   useEffect(() => {
     if (!headerRef.current) return
 
     const footer = document.querySelector('footer')
     if (!footer) return
 
-    const headerHeight = headerRef.current.offsetHeight
-
     const ctx = gsap.context(() => {
-      gsap.to(headerRef.current, {
-        y: -headerHeight, // Sposta l'header verso l'alto (completamente fuori dalla viewport)
-        scrollTrigger: {
-          trigger: footer,
-          start: "top top", // Inizia quando il top del footer tocca il top della viewport (dove c'è l'header)
-          end: `top+=${headerHeight} top`, // Finisce quando il footer è avanzato dell'altezza dell'header
-          scrub: 1, // Smooth scroll
-          invalidateOnRefresh: true,
+      ScrollTrigger.create({
+        trigger: footer,
+        start: "top top", // Inizia quando il top del footer tocca il top della viewport
+        onEnter: () => {
+          // Quando il footer entra nella viewport, inverti i colori
+          setIsAtFooter(true)
         },
-        ease: "power2.out",
+        onLeave: () => {
+          // Quando il footer esce dalla viewport, torna normale
+          setIsAtFooter(false)
+        },
+        onEnterBack: () => {
+          // Quando torni indietro e il footer entra nella viewport, inverti i colori
+          setIsAtFooter(true)
+        },
+        onLeaveBack: () => {
+          // Quando torni indietro e il footer esce dalla viewport, torna normale
+          setIsAtFooter(false)
+        },
       })
     }, headerRef)
 
@@ -115,11 +167,26 @@ export function Header() {
     <>
       <header 
         ref={headerRef}
-        className="fixed top-0 left-0 right-0 z-50 bg-[#ECEBE8] border-b border-black/10"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isHero2Page 
+            ? 'bg-transparent border-transparent' 
+            : isAtFooter
+            ? 'bg-black border-b border-white/10'
+            : 'bg-[#ECEBE8] border-b border-black/10'
+        }`}
       >
         <div className="container mx-auto px-4 flex items-center justify-between h-20">
           {/* Left: Login */}
-          <CTAButton href="/login">LOGIN</CTAButton>
+          <CTAButton 
+            href="/login"
+            className={
+              isHero2Page || isAtFooter 
+                ? '!text-white hover:!opacity-80' 
+                : ''
+            }
+          >
+            LOGIN
+          </CTAButton>
 
           {/* Center: Logo */}
           <Link 
@@ -127,7 +194,10 @@ export function Header() {
             className="absolute left-1/2 -translate-x-1/2"
             data-header-logo
           >
-            <Logo className="w-[120px] h-auto" />
+            <Logo 
+              className="w-[120px] h-auto" 
+              variant={isHero2Page || isAtFooter ? "white" : "black"}
+            />
           </Link>
 
           {/* Right: Menu Button */}
@@ -137,9 +207,15 @@ export function Header() {
             aria-label="Menu"
           >
             {!isMenuOpen ? (
-              <Menu className="w-[26px] h-[26px] text-black" strokeWidth={2.5} />
+              <Menu 
+                className={`w-[26px] h-[26px] ${isHero2Page || isAtFooter ? 'text-white' : 'text-black'}`} 
+                strokeWidth={2.5} 
+              />
             ) : (
-              <X className="w-[26px] h-[26px] text-black" strokeWidth={2.5} />
+              <X 
+                className={`w-[26px] h-[26px] ${isHero2Page || isAtFooter ? 'text-white' : 'text-black'}`} 
+                strokeWidth={2.5} 
+              />
             )}
           </button>
         </div>
