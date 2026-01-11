@@ -1,21 +1,53 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { gsap } from "@/lib/gsap"
 
 interface HoverableWord {
   word: string
   imageId: string
 }
 
+interface ImageConfig {
+  src: string
+  width: number
+  height: number
+}
+
+const imageConfigs: Record<string, ImageConfig> = {
+  panoramic: {
+    src: '/Asset/Location Gallery/location-gallery-01.jpg',
+    width: 400,
+    height: 530, // Portrait 3:4 - larger
+  },
+  exclusive: {
+    src: '/Asset/Location Gallery/location-gallery-02.jpg',
+    width: 500,
+    height: 500, // Square - larger
+  },
+  zurich: {
+    src: '/Asset/Location Gallery/location-gallery-03.jpg',
+    width: 450,
+    height: 340, // Landscape 4:3 - larger
+  },
+  glass: {
+    src: '/Asset/Location Gallery/location-gallery-04.jpg',
+    width: 430,
+    height: 650, // Portrait 2:3 - larger
+  },
+  alps: {
+    src: '/Asset/Location Gallery/location-gallery-05.jpg',
+    width: 540,
+    height: 360, // Landscape 3:2 - larger
+  },
+}
+
 export function Story() {
   const [hoveredImage, setHoveredImage] = useState<string | null>(null)
-  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const [isImageVisible, setIsImageVisible] = useState(false)
-  const animationFrameRef = useRef<number | null>(null)
-  const targetPositionRef = useRef({ x: 0, y: 0 })
-  const currentPositionRef = useRef({ x: 0, y: 0 })
+  const imageRef = useRef<HTMLDivElement | null>(null)
   const preferredSideRef = useRef<'right' | 'left' | null>(null)
-  const animationLoopRef = useRef<number | null>(null)
+  const positionTweenRef = useRef<gsap.core.Tween | null>(null)
 
   // Order matters - process longer phrases first to avoid partial matches
   const hoverableWords: HoverableWord[] = [
@@ -26,56 +58,34 @@ export function Story() {
     { word: "alps", imageId: "alps" },
   ]
 
-  // Smooth interpolation function
-  const lerp = (start: number, end: number, factor: number): number => {
-    return start + (end - start) * factor
-  }
-
-  // Animation loop that smoothly interpolates position with ease-out effect
-  const animatePosition = () => {
-    const current = currentPositionRef.current
-    const target = targetPositionRef.current
+  // Update position using GSAP for smooth, stable animation
+  const updatePosition = (x: number, y: number) => {
+    if (!imageRef.current) return
     
-    // Calculate distance
-    const dx = target.x - current.x
-    const dy = target.y - current.y
-    const distance = Math.sqrt(dx * dx + dy * dy)
-    
-    // If we're close enough, snap to target
-    if (distance < 1.5) {
-      currentPositionRef.current = { ...target }
-      setImagePosition({ ...target })
-      animationLoopRef.current = null
-      return
+    // Kill any existing tween
+    if (positionTweenRef.current) {
+      positionTweenRef.current.kill()
     }
     
-    // More stable easing: less dramatic curve for smoother, more predictable movement
-    const maxDistance = 200 // Reduced max distance for faster normalization
-    const normalizedDistance = Math.min(distance / maxDistance, 1)
-    
-    // Use a gentler quadratic curve instead of cubic for more stability
-    const easedDistance = normalizedDistance * normalizedDistance
-    
-    // Lerp factor: higher minimum (0.12) and lower maximum (0.35) for more stable, responsive movement
-    // This creates a smoother, less "jittery" animation
-    const lerpFactor = 0.12 + (easedDistance * 0.23) // Range: 0.12 to 0.35
-    
-    // Interpolate
-    current.x = lerp(current.x, target.x, lerpFactor)
-    current.y = lerp(current.y, target.y, lerpFactor)
-    
-    setImagePosition({ x: current.x, y: current.y })
-    
-    // Continue animation
-    animationLoopRef.current = requestAnimationFrame(animatePosition)
+    // Use GSAP for smooth interpolation with ease-out
+    positionTweenRef.current = gsap.to(imageRef.current, {
+      x: x,
+      y: y,
+      duration: 0.6,
+      ease: "power2.out",
+      overwrite: true,
+    })
   }
 
-  const calculatePosition = (event: React.MouseEvent<HTMLSpanElement>) => {
+  const calculatePosition = (event: React.MouseEvent<HTMLSpanElement>, imageId: string) => {
     const viewportWidth = window.innerWidth
     const viewportHeight = window.innerHeight
-    const imageWidth = 219
-    const imageHeight = 294
-    const offset = 20
+    const config = imageConfigs[imageId]
+    if (!config) return { x: 0, y: 0 }
+    
+    const imageWidth = config.width
+    const imageHeight = config.height
+    const offset = 10 // Small offset to keep image close to cursor
     
     // Use preferred side if already set, otherwise determine it
     let preferredSide = preferredSideRef.current
@@ -118,18 +128,42 @@ export function Story() {
   }
 
   const handleMouseEnter = (imageId: string, event: React.MouseEvent<HTMLSpanElement>) => {
+    // Kill any existing tweens first to prevent conflicts
+    if (positionTweenRef.current) {
+      positionTweenRef.current.kill()
+      positionTweenRef.current = null
+    }
+    if (imageRef.current) {
+      gsap.killTweensOf(imageRef.current)
+    }
+    
     // Reset visibility state to trigger fade in
     setIsImageVisible(false)
     setHoveredImage(imageId)
     
-    // Calculate and set initial position immediately (no movement, just appear in place)
-    const initialPos = calculatePosition(event)
-    currentPositionRef.current = { ...initialPos }
-    targetPositionRef.current = { ...initialPos }
-    setImagePosition(initialPos)
+    // Calculate initial position
+    const initialPos = calculatePosition(event, imageId)
     
-    // DON'T start animation loop yet - only when mouse moves
-    // Animation smooth will start on first mouse move
+    // Set initial position immediately - X is already correct, Y starts slightly below
+    // Use requestAnimationFrame to ensure DOM is ready before setting position
+    requestAnimationFrame(() => {
+      if (imageRef.current) {
+        // Start from slightly below (subtle entrance - 25px)
+        const startY = initialPos.y + 25
+        // Set both X and Y immediately with no animation, so X doesn't travel from left
+        gsap.set(imageRef.current, { 
+          x: initialPos.x, 
+          y: startY,
+        })
+        
+        // Only animate Y from below to final position (X stays in place, no horizontal movement)
+        gsap.to(imageRef.current, {
+          y: initialPos.y,
+          duration: 0.5,
+          ease: "power2.out",
+        })
+      }
+    })
     
     // Trigger fade in animation after a tiny delay to ensure DOM update
     requestAnimationFrame(() => {
@@ -141,22 +175,17 @@ export function Story() {
 
   const handleMouseMove = (imageId: string, event: React.MouseEvent<HTMLSpanElement>) => {
     // Calculate new target position
-    const newPos = calculatePosition(event)
+    const newPos = calculatePosition(event, imageId)
     
-    // Update target position (the image will smoothly interpolate to this)
-    targetPositionRef.current = newPos
-    
-    // Start animation loop if not already running (this enables smooth following)
-    if (!animationLoopRef.current) {
-      animationLoopRef.current = requestAnimationFrame(animatePosition)
-    }
+    // Update position smoothly with GSAP
+    updatePosition(newPos.x, newPos.y)
   }
 
   const handleMouseLeave = () => {
-    // Stop animation loop
-    if (animationLoopRef.current) {
-      cancelAnimationFrame(animationLoopRef.current)
-      animationLoopRef.current = null
+    // Kill any running position tween
+    if (positionTweenRef.current) {
+      positionTweenRef.current.kill()
+      positionTweenRef.current = null
     }
     
     // Reset preferred side
@@ -167,7 +196,7 @@ export function Story() {
     // Remove image after animation completes
     setTimeout(() => {
       setHoveredImage(null)
-    }, 150) // Match transition duration
+    }, 200) // Match transition duration
   }
 
 
@@ -175,8 +204,11 @@ export function Story() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (animationLoopRef.current) {
-        cancelAnimationFrame(animationLoopRef.current)
+      if (positionTweenRef.current) {
+        positionTweenRef.current.kill()
+      }
+      if (imageRef.current) {
+        gsap.killTweensOf(imageRef.current)
       }
     }
   }, [])
@@ -295,38 +327,44 @@ export function Story() {
           {renderText()}
         </p>
 
-        {/* Image placeholder that appears on hover */}
-        {hoveredImage && (
+        {/* Image that appears on hover */}
+        {hoveredImage && imageConfigs[hoveredImage] && (
           <div
+            ref={imageRef}
             className="fixed pointer-events-none z-50"
             style={{
-              left: `${imagePosition.x}px`,
-              top: `${imagePosition.y}px`,
+              left: 0,
+              top: 0,
               opacity: isImageVisible ? 1 : 0,
               filter: isImageVisible ? 'blur(0px)' : 'blur(8px)',
-              transition: 'opacity 0.15s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.15s cubic-bezier(0.25, 0.1, 0.25, 1)',
-              transform: "translateY(0)",
+              transition: 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
               willChange: 'opacity, filter, transform',
+              transform: 'translate(0, 0)', // Initial transform to prevent flash
             }}
           >
             <div 
-              className="bg-gray-400 rounded-sm border border-gray-300"
+              className="rounded-sm border border-gray-300 overflow-hidden shadow-lg"
               style={{
-                width: '219px',
-                height: '294px',
-                aspectRatio: '219 / 294',
+                width: `${imageConfigs[hoveredImage].width}px`,
+                height: `${imageConfigs[hoveredImage].height}px`,
                 flexShrink: 0,
-                minWidth: '219px',
-                minHeight: '294px',
-                maxWidth: '219px',
-                maxHeight: '294px',
               }}
-            />
+            >
+              <img
+                src={imageConfigs[hoveredImage].src}
+                alt={hoveredImage}
+                className="w-full h-full object-cover"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+            </div>
           </div>
         )}
 
         {/* Two paragraphs side by side */}
-        <div className="mt-24 max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12">
+        <div className="mt-16 max-w-6xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12">
           <p className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
             On the 13th floor, the glass-enclosed terrace and bar invite guests to begin the evening in style with an aperitif.
           </p>

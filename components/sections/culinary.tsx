@@ -257,8 +257,11 @@ export function Culinary() {
           </div>
 
           {/* Final Statement */}
-          <p className="text-4xl md:text-5xl lg:text-[52px] font-serif text-black text-center leading-loose max-w-5xl">
-            This <span className="italic">motivates</span> us to teach our customers and guests how to use resources sparingly and to make a joint <span className="italic">contribution</span> to a better world. Because as a host, HAUTE wants to give only the <span className="italic">best</span>, always and everywhere!
+          <p 
+            className="text-4xl md:text-5xl lg:text-[52px] font-serif text-black/70 text-center max-w-5xl"
+            style={{ lineHeight: '1.5' }}
+          >
+            This <span className="italic text-black">motivates</span> us to teach our customers and guests how to use resources sparingly and to make a joint <span className="italic text-black">contribution</span> to a better world. Because as a host, HAUTE wants to give only the <span className="italic text-black">best</span>, always and everywhere!
           </p>
 
           {/* Online Reservations CTA */}

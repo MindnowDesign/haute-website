@@ -5,31 +5,103 @@ import ImageTrail, { ImageTrailItem } from "@/components/fancy/image/image-trail
 import { useEffect, useRef } from "react"
 import Lenis from "lenis"
 
-// Array di immagini con aspect ratio diversi e URL da Unsplash
+// Array di immagini dalla Location Gallery
 const images = [
   { 
     id: 1, 
     aspectRatio: "4/3", 
     width: 400,
-    url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80"
+    url: "/Asset/Location Gallery/location-gallery-01.jpg"
   },
   { 
     id: 2, 
     aspectRatio: "16/9", 
     width: 450,
-    url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80"
+    url: "/Asset/Location Gallery/location-gallery-02.jpg"
   },
   { 
     id: 3, 
     aspectRatio: "3/4", 
     width: 350,
-    url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80"
+    url: "/Asset/Location Gallery/location-gallery-03.jpg"
   },
   { 
     id: 4, 
     aspectRatio: "1/1", 
     width: 380,
-    url: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=600&q=80"
+    url: "/Asset/Location Gallery/location-gallery-04.jpg"
+  },
+  { 
+    id: 5, 
+    aspectRatio: "4/3", 
+    width: 400,
+    url: "/Asset/Location Gallery/location-gallery-05.jpg"
+  },
+  { 
+    id: 6, 
+    aspectRatio: "16/9", 
+    width: 450,
+    url: "/Asset/Location Gallery/location-gallery-06.jpg"
+  },
+  { 
+    id: 7, 
+    aspectRatio: "3/4", 
+    width: 350,
+    url: "/Asset/Location Gallery/location-gallery-07.jpg"
+  },
+  { 
+    id: 8, 
+    aspectRatio: "1/1", 
+    width: 380,
+    url: "/Asset/Location Gallery/location-gallery-08.jpg"
+  },
+  { 
+    id: 9, 
+    aspectRatio: "4/3", 
+    width: 400,
+    url: "/Asset/Location Gallery/location-gallery-09.jpg"
+  },
+  { 
+    id: 10, 
+    aspectRatio: "16/9", 
+    width: 450,
+    url: "/Asset/Location Gallery/location-gallery-10.jpg"
+  },
+  { 
+    id: 11, 
+    aspectRatio: "3/4", 
+    width: 350,
+    url: "/Asset/Location Gallery/location-gallery-11.jpg"
+  },
+  { 
+    id: 12, 
+    aspectRatio: "1/1", 
+    width: 380,
+    url: "/Asset/Location Gallery/location-gallery-12.jpg"
+  },
+  { 
+    id: 13, 
+    aspectRatio: "4/3", 
+    width: 400,
+    url: "/Asset/Location Gallery/location-gallery-13.jpg"
+  },
+  { 
+    id: 14, 
+    aspectRatio: "16/9", 
+    width: 450,
+    url: "/Asset/Location Gallery/location-gallery-14.jpg"
+  },
+  { 
+    id: 15, 
+    aspectRatio: "3/4", 
+    width: 350,
+    url: "/Asset/Location Gallery/location-gallery-15.jpg"
+  },
+  { 
+    id: 16, 
+    aspectRatio: "1/1", 
+    width: 380,
+    url: "/Asset/Location Gallery/location-gallery-16.jpg"
   },
 ]
 
