@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import Image from "next/image"
 import { gsap } from "@/lib/gsap"
 
 interface TeamMember {
@@ -300,7 +301,7 @@ export function Team() {
             </p>
             <div className="text-[20px] leading-relaxed text-[#8b8b8b] font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
               <p className="mb-0">
-                True hospitality reveals itself when it goes unnoticed yet leaves a lasting impression. That's why we do everything to make you feel not only welcome but truly understood.
+                True hospitality reveals itself when it goes unnoticed yet leaves a lasting impression. That&apos;s why we do everything to make you feel not only welcome but truly understood.
               </p>
               <p>
                 Your experience is always at the center – hospitality that connects: personal, effortless, and full of passion.
@@ -321,9 +322,11 @@ export function Team() {
                     <div key={memberIndex} className="team-member-item flex gap-8 items-end flex-1 md:max-w-[33.333%]">
                       {/* Team member image */}
                       <div className="relative shrink-0 w-[115px] h-[115px] rounded-sm overflow-hidden">
-                        <img 
+                        <Image 
                           src={member.image || "/Asset/Team/platzhalter.jpg"} 
                           alt={member.name}
+                          width={115}
+                          height={115}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -382,10 +385,10 @@ export function Team() {
         {/* Right side - Description paragraphs */}
         <div className="flex flex-col gap-12 flex-1">
           <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-            We are always looking for motivated individuals who share our passion for excellence and hospitality. Whether you're an experienced chef, service professional, or looking to start your career in the culinary world, we offer opportunities to grow and excel in a dynamic, supportive environment.
+            We are always looking for motivated individuals who share our passion for excellence and hospitality. Whether you&apos;re an experienced chef, service professional, or looking to start your career in the culinary world, we offer opportunities to grow and excel in a dynamic, supportive environment.
           </p>
           <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif]">
-            Join a team that values dedication, creativity, and the art of creating memorable experiences. At HAUTE, you'll work alongside talented professionals in an atmosphere that encourages both personal and professional development.
+            Join a team that values dedication, creativity, and the art of creating memorable experiences. At HAUTE, you&apos;ll work alongside talented professionals in an atmosphere that encourages both personal and professional development.
           </p>
         </div>
       </div>

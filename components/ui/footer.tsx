@@ -59,7 +59,7 @@ export function Footer() {
                   <div className="leading-[21.2px]">
                     <p>HAUTE will be closed from 20th</p>
                     <p>December 2025, through 4th January</p>
-                    <p>2026 (except New Year's Eve).</p>
+                    <p>2026 (except New Year&apos;s Eve).</p>
                   </div>
                 </div>
               </div>

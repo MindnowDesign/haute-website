@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import Image from "next/image"
 import { gsap } from "@/lib/gsap"
 
 interface HoverableWord {
@@ -203,12 +204,13 @@ export function Story() {
 
   // Cleanup on unmount
   useEffect(() => {
+    const imageElement = imageRef.current
     return () => {
       if (positionTweenRef.current) {
         positionTweenRef.current.kill()
       }
-      if (imageRef.current) {
-        gsap.killTweensOf(imageRef.current)
+      if (imageElement) {
+        gsap.killTweensOf(imageElement)
       }
     }
   }, [])
@@ -350,9 +352,11 @@ export function Story() {
                 flexShrink: 0,
               }}
             >
-              <img
+              <Image
                 src={imageConfigs[hoveredImage].src}
                 alt={hoveredImage}
+                width={imageConfigs[hoveredImage].width}
+                height={imageConfigs[hoveredImage].height}
                 className="w-full h-full object-cover"
                 style={{
                   width: '100%',

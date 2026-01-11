@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import Image from "next/image"
 import { gsap } from "@/lib/gsap"
 
 export function Gallery() {
@@ -309,9 +310,11 @@ export function Gallery() {
                     height: `${image.height}px`,
                   }}
                 >
-                  <img
+                  <Image
                     src={image.src}
                     alt={`Location gallery ${image.id}`}
+                    width={image.width}
+                    height={image.height}
                     className="w-full h-full object-cover"
                     style={{
                       width: `${image.width}px`,

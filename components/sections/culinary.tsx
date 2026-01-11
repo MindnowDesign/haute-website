@@ -135,7 +135,7 @@ export function Culinary() {
               Amidst its unique location, the cuisine at HAUTE delights with fresh perspectives and creative indulgence. We treat our members and their guests to exquisite European cuisine – seasonal, carefully selected, and focused on sustainable ingredients.
             </p>
             <p className="text-[18px] leading-[1.5] text-black/60 font-normal font-['Helvetica Neue', Helvetica, Arial, sans-serif] flex-1">
-              Our wine list offers the perfect choice for every mood and moment. Whether it's a business lunch, a refreshing cocktail at sunset on the terrace, a light after-work meal, or a festive dinner by the crackling fireplace – dining at HAUTE is pure joy.
+              Our wine list offers the perfect choice for every mood and moment. Whether it&apos;s a business lunch, a refreshing cocktail at sunset on the terrace, a light after-work meal, or a festive dinner by the crackling fireplace – dining at HAUTE is pure joy.
             </p>
           </div>
         </div>

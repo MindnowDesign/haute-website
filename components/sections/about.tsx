@@ -9,7 +9,7 @@ export function About() {
             About Us
           </h2>
           <p className="text-lg text-black/70 leading-relaxed">
-            Welcome to Haute Club, Zurich's most exclusive destination for
+            Welcome to Haute Club, Zurich&apos;s most exclusive destination for
             discerning individuals. Experience luxury, elegance, and
             sophistication in an unparalleled setting.
           </p>
