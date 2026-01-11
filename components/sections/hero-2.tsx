@@ -52,7 +52,7 @@ export function Hero2() {
             fill
             className="object-cover"
             priority
-            unoptimized
+            sizes="100vw"
           />
           
           {/* Overlay gradient */}

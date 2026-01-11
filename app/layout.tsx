@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   icons: {
     icon: "/Favicon/icon.png",
   },
+  other: {
+    "format-detection": "telephone=no",
+  },
 }
 
 export default function RootLayout({

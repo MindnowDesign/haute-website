@@ -246,6 +246,8 @@ export function Culinary() {
               width={70} 
               height={70} 
               className="shrink-0"
+              loading="lazy"
+              sizes="70px"
             />
             <Image 
               src="/Asset/Culinary/Okgo.png" 
@@ -253,6 +255,8 @@ export function Culinary() {
               width={64} 
               height={70} 
               className="shrink-0"
+              loading="lazy"
+              sizes="64px"
             />
           </div>
 

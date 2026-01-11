@@ -114,11 +114,13 @@ export function Gallery() {
           const maxDistortion = Math.min(velocityMagnitude * 2.0, 90)
           const distortionIntensity = maxDistortion * velocitySign
           
-          // Create wave effect using clip-path polygon
-          // Simulate sin wave across the image height (distorting left/right edges)
-          const steps = 50
-          const points: string[] = []
+          // Optimize: cache image width and reduce steps for better performance
           const imageWidth = imageEl.offsetWidth || imageEl.getBoundingClientRect().width
+          if (!imageWidth) return
+          
+          // Reduce steps from 50 to 20 for better performance while maintaining visual quality
+          const steps = 20
+          const points: string[] = []
           
           // Left edge with wave
           for (let i = 0; i <= steps; i++) {
@@ -139,10 +141,12 @@ export function Gallery() {
           // Apply clip-path for horizontal wave distortion
           imageEl.style.clipPath = `polygon(${points.join(', ')})`
           imageEl.style.transition = "none"
+          imageEl.style.willChange = "clip-path"
         } else {
           // Reset immediately when not scrolling (no animation)
           imageEl.style.clipPath = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
           imageEl.style.transition = "none"
+          imageEl.style.willChange = "auto"
         }
       })
     }
@@ -284,7 +288,12 @@ export function Gallery() {
           className="flex gap-[35px] items-start"
           style={{ willChange: "transform" }}
         >
-          {duplicatedImages.map((image, index) => (
+          {duplicatedImages.map((image, index) => {
+            // For duplicated images (second set), use the same src but with different loading strategy
+            const isDuplicate = index >= images.length
+            const actualImageIndex = isDuplicate ? index - images.length : index
+            
+            return (
             <div
               key={`${image.id}-${index}`}
               className="flex flex-col gap-6 shrink-0"
@@ -316,6 +325,8 @@ export function Gallery() {
                     width={image.width}
                     height={image.height}
                     className="w-full h-full object-cover"
+                    loading={actualImageIndex < 4 ? "eager" : "lazy"}
+                    sizes={`(max-width: 768px) ${image.width}px, ${image.width}px`}
                     style={{
                       width: `${image.width}px`,
                       height: `${image.height}px`,
@@ -324,7 +335,7 @@ export function Gallery() {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
     </section>

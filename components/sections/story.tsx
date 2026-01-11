@@ -358,6 +358,8 @@ export function Story() {
                 width={imageConfigs[hoveredImage].width}
                 height={imageConfigs[hoveredImage].height}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                sizes={`(max-width: 768px) ${imageConfigs[hoveredImage].width}px, ${imageConfigs[hoveredImage].width}px`}
                 style={{
                   width: '100%',
                   height: '100%',

@@ -177,7 +177,8 @@ export function Hero() {
               alt="Trail image"
               fill
               className="object-cover"
-              unoptimized
+              loading="lazy"
+              sizes="(max-width: 768px) 400px, 450px"
             />
           </ImageTrailItem>
         ))}

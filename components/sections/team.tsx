@@ -328,6 +328,8 @@ export function Team() {
                           width={115}
                           height={115}
                           className="w-full h-full object-cover"
+                          loading={rowIndex < 2 ? "eager" : "lazy"}
+                          sizes="115px"
                         />
                       </div>
                       <div className="flex flex-col gap-[13px] items-start flex-1 min-w-0 max-w-[280px]">
